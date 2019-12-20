@@ -1,10 +1,7 @@
 environments:
   - name: e1
-    groups: 
-      - all
     users: []
   - name: e2
-    groups: []
     users: 
       - john.doe
       - mary.foo

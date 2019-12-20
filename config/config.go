@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -11,9 +12,14 @@ type Config struct {
 }
 
 type Environment struct {
-	Name   string   `yaml:"name"`
-	Groups []string `yaml:"groups"`
-	Users  []string `yaml:"users"`
+	Name  string   `yaml:"name"`
+	Users []string `yaml:"users"`
+}
+
+var AppConfig Config
+
+func init() {
+	AppConfig, _ = ParseFile(os.Getenv("KUBOT_CONFIG"))
 }
 
 func ParseFile(f string) (Config, error) {
@@ -41,4 +47,33 @@ func Parse(bs []byte) (Config, error) {
 	err := yaml.Unmarshal(bs, &config)
 
 	return config, err
+}
+
+func (c Config) GetEnvironment(env string) (*Environment, error) {
+	for _, e := range c.Environments {
+		if e.Name == env {
+			return &e, nil
+		}
+	}
+
+	return nil, errors.New("Environment not found")
+}
+
+func (c Config) HasAccess(user string, env string) bool {
+	e, err := c.GetEnvironment(env)
+	if err != nil {
+		return false
+	}
+
+	return e.ContainsUser(user)
+}
+
+func (e Environment) ContainsUser(u string) bool {
+	for _, user := range e.Users {
+		if user == u {
+			return true
+		}
+	}
+
+	return false
 }

@@ -12,8 +12,9 @@ type Config struct {
 }
 
 type Environment struct {
-	Name  string   `yaml:"name"`
-	Users []string `yaml:"users"`
+	Name    string   `yaml:"name"`
+	Users   []string `yaml:"users"`
+	Channel string   `yaml:"channel"`
 }
 
 var AppConfig Config
@@ -52,6 +53,16 @@ func Parse(bs []byte) (Config, error) {
 func (c Config) GetEnvironment(env string) (*Environment, error) {
 	for _, e := range c.Environments {
 		if e.Name == env {
+			return &e, nil
+		}
+	}
+
+	return nil, errors.New("Environment not found")
+}
+
+func (c Config) GetEnvironmentByChannel(ch string) (*Environment, error) {
+	for _, e := range c.Environments {
+		if e.Channel == ch {
 			return &e, nil
 		}
 	}

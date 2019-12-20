@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/nlopes/slack"
+	"kubot/config"
 )
 
 var (
@@ -37,6 +38,10 @@ func handleEvent(e slack.RTMEvent) {
 	switch ev := e.Data.(type) {
 	case *slack.MessageEvent:
 		cmd, err := parser.Parse(ev.Text)
+
+		// TODO: Check if user has access to the environment. Question is, how do we determine
+		// the environment????
+
 		if err != nil {
 			rtm.SendMessage(rtm.NewOutgoingMessage(err.Error(), ev.Channel))
 			return

@@ -7,7 +7,7 @@ import (
 )
 
 func TestParseFile(t *testing.T) {
-	config, _ := ParseFile("./resources/authorization.yml")
+	config, _ := ParseFile("./resources/config.yml")
 
 	expected := Config{
 		Environments: []Environment{

@@ -18,6 +18,8 @@ export KUBOT_SLACK_TOKEN=secrettoken
 - Add a !release <product> command to toxic to perform a make release to increment the version and tag the product
 
 # kubot commands
+- !deploy <product> <version>
+
 - !kick <pod>
 - restart a pod
 
@@ -26,11 +28,3 @@ export KUBOT_SLACK_TOKEN=secrettoken
 
 - !secret <product>
 - helm apply secret
-
-- !deploy <product> <version>
-- helm repo update
-- checkout the environment repo
-- update and push the product version change
-- helm upgrade product repo/chartname --wait --timeout 900 --version version -f environment/product/yaml
-- Log all command output to kibana and scrub any sensitive data
-- Upon completion, post a message to slack

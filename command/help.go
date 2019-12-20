@@ -6,6 +6,10 @@ func NewHelp() (*Help, error) {
 	return &Help{}, nil
 }
 
+func (h Help) Name() string {
+	return "help"
+}
+
 func (h Help) Execute(out chan string) {
 	defer close(out)
 

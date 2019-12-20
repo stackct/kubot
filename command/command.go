@@ -2,11 +2,17 @@ package command
 
 import (
 	"errors"
+	"fmt"
+	"io"
+	"os/exec"
 	"regexp"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Command interface {
+	Name() string
 	Execute(output chan string)
 }
 
@@ -45,4 +51,21 @@ func (foo SlackCommandParser) Parse(c string) (Command, error) {
 	}
 
 	return nil, nil
+}
+
+func Execute(c Command, writer *io.PipeWriter, out chan string, name string, args ...string) {
+	cmd := exec.Command(name, args...)
+	cmd.Stdout = writer
+	cmd.Stderr = writer
+
+	if err := cmd.Start(); err != nil {
+		log.Error(err)
+		out <- fmt.Sprintf("*%s* command failed", c.Name())
+		return
+	}
+	if err := cmd.Wait(); err != nil {
+		log.Error(err)
+		out <- fmt.Sprintf("*%s* command failed", c.Name())
+		return
+	}
 }

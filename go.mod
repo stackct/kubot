@@ -6,7 +6,6 @@ replace github.com/nlopes/slack v0.6.0 => github.com/acaloiaro/slack v0.6.3-0.20
 go 1.13
 
 require (
-	github.com/acaloiaro/slack v0.6.3 // indirect
 	github.com/gorilla/websocket v1.2.0
 	github.com/nlopes/slack v0.6.0
 	github.com/sirupsen/logrus v1.4.2

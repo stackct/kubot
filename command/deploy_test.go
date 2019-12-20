@@ -29,16 +29,8 @@ func TestNewDeploy(t *testing.T) {
 func TestDeployExecute(t *testing.T) {
 	out := make(chan string)
 
-	expected := "Deploying *Foo*..."
+	go Deploy{product: "Foo"}.Execute(out)
 
-	go func() {
-		if msg := <-out; expected != msg {
-			t.Fatalf("Assertion failed; wanted: %s, but got: %s", expected, msg)
-		}
-		<-out
-		<-out
-		<-out
-	}()
-
-	Deploy{product: "Foo"}.Execute(out)
+	assert.Equal(t, "Deploying *Foo*...", <-out)
+	assert.Equal(t, "*Foo* deployment complete", <-out)
 }

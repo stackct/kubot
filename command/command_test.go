@@ -1,7 +1,9 @@
 package command
 
 import (
+	"bytes"
 	"errors"
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -38,4 +40,31 @@ func TestParseCommand(t *testing.T) {
 			assert.Equal(t, tt.expected, command)
 		}
 	}
+}
+
+type TestCommand struct{}
+
+func (t TestCommand) Name() string            { return "mock" }
+func (t TestCommand) Execute(out chan string) {}
+
+func TestExecuteSuccess(t *testing.T) {
+	r, w := io.Pipe()
+	out := make(chan string)
+	buf := new(bytes.Buffer)
+
+	go func() { buf.ReadFrom(r) }()
+	Execute(&TestCommand{}, w, out, "echo", "foo")
+	assert.Equal(t, "foo\n", buf.String())
+}
+
+func TestExecuteCommandFails(t *testing.T) {
+	r, w := io.Pipe()
+	out := make(chan string)
+	buf := new(bytes.Buffer)
+
+	go func() { buf.ReadFrom(r) }()
+	go Execute(&TestCommand{}, w, out, "ls", "foo")
+
+	assert.Equal(t, "*mock* command failed", <-out)
+	assert.Equal(t, "ls: cannot access 'foo': No such file or directory\n", buf.String())
 }

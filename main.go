@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/dotariel/kubot/slack"
+	"kubot/slack"
 	"os"
 	"os/signal"
 	"syscall"

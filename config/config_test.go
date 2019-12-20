@@ -2,18 +2,12 @@ package config
 
 import (
 	"github.com/stretchr/testify/assert"
-	"io/ioutil"
-	"os"
 	"reflect"
 	"testing"
 )
 
-func TestParse(t *testing.T) {
-	file, _ := os.Open("./resources/authorization.yml")
-	input, _ := ioutil.ReadAll(file)
-	bytes := []byte(input)
-
-	config, _ := Parse(bytes)
+func TestParseFile(t *testing.T) {
+	config, _ := ParseFile("./resources/authorization.yml")
 
 	expected := Config{
 		Environments: []Environment{

@@ -1,7 +1,6 @@
 package slack
 
 import (
-	"errors"
 	"kubot/command"
 	"kubot/config"
 	"testing"
@@ -60,12 +59,13 @@ func TestStart_Wrong_Environment(t *testing.T) {
 		incomingText string
 		outgoingText string
 	}{
-		{MissingEnvironment, "!help", "Environment not found"},
-		{ExistingEnvironment, "!help", "available commands: [deploy]"},
+		{MissingEnvironment, "!cmd", "Environment not found"},
+		{ExistingEnvironment, "!cmd", "fin"},
 	}
 
 	for _, tc := range testCases {
 		Conf = config.NewMockConfig(tc.option)
+		parser = command.NewMockParser()
 
 		runTest(t, tc.incomingText, tc.outgoingText)
 	}
@@ -79,41 +79,16 @@ func TestStart_No_Access(t *testing.T) {
 		incomingText string
 		outgoingText string
 	}{
-		{NoAccess, "!help", "Authorization denied"},
-		{FullAccess, "!help", "available commands: [deploy]"},
+		{NoAccess, "!cmd", "Authorization denied"},
+		{FullAccess, "!cmd", "fin"},
 	}
 
 	for _, tc := range testCases {
 		Conf = config.NewMockConfig(tc.option)
+		parser = command.NewMockParser()
 
 		runTest(t, tc.incomingText, tc.outgoingText)
 	}
-}
-
-func ParseSuccess(mp *command.MockParser) {
-	mp.MockError = nil
-	mp.MockCommand = command.MockCommand{}
-}
-
-func ParseError(mp *command.MockParser) {
-	mp.MockError = errors.New("unknown command")
-	mp.MockCommand = nil
-}
-
-func MissingEnvironment(c *config.MockConfig) {
-	c.MockHasEnvironment = false
-}
-
-func ExistingEnvironment(c *config.MockConfig) {
-	c.MockHasEnvironment = true
-}
-
-func NoAccess(c *config.MockConfig) {
-	c.MockHasAccess = false
-}
-
-func FullAccess(c *config.MockConfig) {
-	c.MockHasAccess = true
 }
 
 func runTest(t *testing.T, incomingText string, outgoingText string) {

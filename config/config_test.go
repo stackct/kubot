@@ -50,7 +50,7 @@ func TestConfig_GetEnvironmentByChannel(t *testing.T) {
 	}{
 		{"ch1", &mockConfig.Environments[0], nil},
 		{"ch2", &mockConfig.Environments[1], nil},
-		{"ch3", nil, errors.New("Environment corresponding to channel 'ch3' not found")},
+		{"ch3", nil, errors.New("Environment not found for channel: 'ch3'")},
 	}
 
 	for _, tc := range testCases {

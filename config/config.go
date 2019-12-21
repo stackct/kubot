@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -39,6 +40,8 @@ func ParseFile(f string) (Configurator, error) {
 		return Config{}, err
 	}
 
+	log.Infof("configuration file loaded; path=%v; environments=%v; \n", f, len(config.Environments))
+
 	return config, nil
 }
 
@@ -66,7 +69,7 @@ func (c Config) GetEnvironmentByChannel(ch string) (*Environment, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("Environment corresponding to channel '%v' not found", ch)
+	return nil, fmt.Errorf("Environment not found for channel: '%v'", ch)
 }
 
 func (c Config) HasAccess(user string, env string) bool {

@@ -21,10 +21,11 @@ var (
 
 func init() {
 	Conf, _ = config.ParseFile(os.Getenv("KUBOT_CONFIG"))
+	logger := log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)
 
 	startOptions = []slack.Option{
-		slack.OptionDebug(false),
-		slack.OptionLog(log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)),
+		slack.OptionDebug(true),
+		slack.OptionLog(logger),
 	}
 
 	api := slack.New(os.Getenv("KUBOT_SLACK_TOKEN"), startOptions...)

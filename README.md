@@ -28,3 +28,19 @@ export KUBOT_SLACK_TOKEN=secrettoken
 
 - !secret <product>
 - helm apply secret
+
+## Local Setup
+Kubot authorization is managed through a configuration file located at `KUBOT_CONFIG` and structured as follows:
+
+```
+environments:
+  -name: e1:
+   channel: chan1
+   users:
+    - user1
+    - user2
+  -name: e2:
+   channel: chan2
+   users:
+    - user3
+```

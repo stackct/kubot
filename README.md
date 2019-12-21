@@ -44,3 +44,9 @@ environments:
    users:
     - user3
 ```
+
+## Docker
+
+```
+docker run -e KUBOT_SLACK_TOKEN=xxxxx -v config.yml:/config.yml -it dotariel/kubot
+```

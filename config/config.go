@@ -2,11 +2,17 @@ package config
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 )
+
+var Log *zap.Logger
+
+func init() {
+	Log, _ = zap.NewProduction()
+}
 
 type Config struct {
 	Environments []Environment `yaml:"environments"`
@@ -40,7 +46,7 @@ func ParseFile(f string) (Configurator, error) {
 		return Config{}, err
 	}
 
-	log.Infof("configuration file loaded; path=%v; environments=%v; \n", f, len(config.Environments))
+	Log.Info("configuration file loaded", zap.String("path", f), zap.Int("environments", len(config.Environments)))
 
 	return config, nil
 }

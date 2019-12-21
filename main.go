@@ -2,12 +2,12 @@ package main
 
 import (
 	"kubot/api"
+	"kubot/config"
 	"kubot/slack"
 	"os"
 	"os/signal"
 	"syscall"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -27,12 +27,12 @@ func main() {
 }
 
 func run() {
-	log.SetFormatter(&log.JSONFormatter{})
-
+	defer config.Log.Sync()
 	stop := make(chan os.Signal, 2)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 
 	go api.Start(apiPort)
 	go slack.Start()
 	<-stop
+
 }

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gorilla/websocket"
-	log "github.com/sirupsen/logrus"
+	"go.uber.org/zap"
 	"net/http"
 	"net/http/httptest"
 	"time"
@@ -26,7 +26,7 @@ func newMockServer() *MockServer {
 	http.HandleFunc("/rtm", server.websocket)
 	http.HandleFunc("/rtm.connect", server.connect)
 
-	log.Printf("mock server started; %s, %s", server.httpURL(), server.wsURL())
+	log.Info("mock server started", zap.String("httpUrl", server.httpURL()), zap.String("wsUrl", server.wsURL()))
 
 	return server
 }
@@ -59,21 +59,21 @@ func (ms *MockServer) connect(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ms *MockServer) websocket(w http.ResponseWriter, r *http.Request) {
-	log.Debug("handling request for", r.URL)
+	log.Debug("handling request", zap.String("url", r.URL.String()))
 
 	upgrader := websocket.Upgrader{
 		CheckOrigin: func(*http.Request) bool { return true },
 	}
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Print("upgrade:", err)
+		log.Error("upgrade failed", zap.Error(err))
 	}
 	defer c.Close()
 
 	for {
 		_, message, err := c.ReadMessage()
 		if err != nil {
-			log.Println("read:", err)
+			log.Error("read failed", zap.Error(err))
 			break
 		}
 

@@ -3,13 +3,16 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"kubot/command"
+	"kubot/config"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	log "github.com/sirupsen/logrus"
 )
+
+var log = config.Log
 
 func Start(port string) {
 	if "" != port {
@@ -25,7 +28,7 @@ func Execute(w http.ResponseWriter, r *http.Request) {
 	bodyBuffer, _ := ioutil.ReadAll(r.Body)
 	cmd, err := command.NewSlackCommandParser().Parse(string(bodyBuffer))
 	if err != nil {
-		log.Error("Failed to parse cmd request; reason=", err)
+		log.Error("Failed to parse cmd request; reason=", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

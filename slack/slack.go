@@ -2,8 +2,9 @@ package slack
 
 import (
 	"errors"
+	"fmt"
+	"go.uber.org/zap"
 	"kubot/command"
-	"log"
 	"os"
 
 	"github.com/nlopes/slack"
@@ -19,14 +20,12 @@ var (
 	channels     []slack.Channel
 )
 
+var log = config.Log
+
 func init() {
 	Conf, _ = config.ParseFile(os.Getenv("KUBOT_CONFIG"))
-	logger := log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)
 
-	startOptions = []slack.Option{
-		slack.OptionDebug(true),
-		slack.OptionLog(logger),
-	}
+	startOptions = []slack.Option{}
 
 	api := slack.New(os.Getenv("KUBOT_SLACK_TOKEN"), startOptions...)
 	rtm = api.NewRTM()
@@ -45,6 +44,8 @@ func Start() {
 }
 
 func handleEvent(e slack.RTMEvent) {
+	log.Info("incoming event", zap.String("type", fmt.Sprintf("%T", e.Data)))
+
 	switch ev := e.Data.(type) {
 	case *slack.MessageEvent:
 		cmd, err := parser.Parse(ev.Text)

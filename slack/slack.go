@@ -14,7 +14,7 @@ var (
 	Conf         config.Configurator
 	startOptions []slack.Option
 	rtm          *slack.RTM
-	parser       command.SlackCommandParser
+	parser       command.CommandParser
 	users        []slack.User
 	channels     []slack.Channel
 )
@@ -60,11 +60,6 @@ func handleEvent(e slack.RTMEvent) {
 
 		if !Conf.HasAccess(getUser(ev.User).Profile.Email, env.Name) {
 			handleError(errors.New("Authorization denied"), ev.Channel)
-			return
-		}
-
-		if err != nil {
-			handleError(err, ev.Channel)
 			return
 		}
 

@@ -16,10 +16,6 @@ type Command interface {
 	Execute(output chan string)
 }
 
-type CommandParser interface {
-	Parse(string) (Command, error)
-}
-
 type SlackCommandParser struct{}
 
 func NewSlackCommandParser() SlackCommandParser {

@@ -26,9 +26,6 @@ export KUBOT_SLACK_TOKEN=secrettoken
 - !restart <product>
 - kubectl -n <product> rollout restart deployment/<product>
 
-- !secret <product>
-- helm apply secret
-
 ## Local Setup
 Kubot authorization is managed through a configuration file located at `KUBOT_CONFIG` and structured as follows:
 

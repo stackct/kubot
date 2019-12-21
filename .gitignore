@@ -1,3 +1,4 @@
 gen/
 coverage.txt
 .DS_Store
+kubot

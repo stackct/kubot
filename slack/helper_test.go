@@ -5,13 +5,19 @@ import (
 	"github.com/nlopes/slack"
 )
 
+var channel string
+
+func init() {
+	channel = "_channel"
+}
+
 func newMessageEvent(body string) slack.RTMEvent {
 	return slack.RTMEvent{
 		Type: "Message",
 		Data: &slack.MessageEvent{
 			Msg: slack.Msg{
 				User:    "_user",
-				Channel: "_channel",
+				Channel: channel,
 				Text:    body,
 			},
 		},

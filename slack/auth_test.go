@@ -7,7 +7,7 @@ import (
 )
 
 func TestHasAccess(t *testing.T) {
-	config.AppConfig = config.Config{
+	Conf = config.Config{
 		Environments: []config.Environment{
 			config.Environment{Name: "e1", Users: []string{"u1"}},
 			config.Environment{Name: "e2", Users: []string{"u2", "u3"}},

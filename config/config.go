@@ -1,7 +1,7 @@
 package config
 
 import (
-	"errors"
+	"fmt"
 	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -11,19 +11,18 @@ type Config struct {
 	Environments []Environment `yaml:"environments"`
 }
 
+type Configurator interface {
+	HasAccess(id string, env string) bool
+	GetEnvironmentByChannel(ch string) (*Environment, error)
+}
+
 type Environment struct {
 	Name    string   `yaml:"name"`
 	Users   []string `yaml:"users"`
 	Channel string   `yaml:"channel"`
 }
 
-var AppConfig Config
-
-func init() {
-	AppConfig, _ = ParseFile(os.Getenv("KUBOT_CONFIG"))
-}
-
-func ParseFile(f string) (Config, error) {
+func ParseFile(f string) (Configurator, error) {
 	file, err := os.Open(f)
 	if err != nil {
 		return Config{}, err
@@ -57,7 +56,7 @@ func (c Config) GetEnvironment(env string) (*Environment, error) {
 		}
 	}
 
-	return nil, errors.New("Environment not found")
+	return nil, fmt.Errorf("Environment '%v' not found", env)
 }
 
 func (c Config) GetEnvironmentByChannel(ch string) (*Environment, error) {
@@ -67,7 +66,7 @@ func (c Config) GetEnvironmentByChannel(ch string) (*Environment, error) {
 		}
 	}
 
-	return nil, errors.New("Environment not found")
+	return nil, fmt.Errorf("Environment corresponding to channel '%v' not found", ch)
 }
 
 func (c Config) HasAccess(user string, env string) bool {

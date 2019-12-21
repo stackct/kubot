@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
@@ -27,19 +28,16 @@ func TestConfig_GetEnvironment(t *testing.T) {
 	testCases := []struct {
 		name        string
 		environment *Environment
-		error       bool
+		error       error
 	}{
-		{"e1", &mockConfig.Environments[0], false},
-		{"e2", &mockConfig.Environments[1], false},
-		{"e3", nil, true},
+		{"e1", &mockConfig.Environments[0], nil},
+		{"e2", &mockConfig.Environments[1], nil},
+		{"e3", nil, errors.New("Environment 'e3' not found")},
 	}
 
 	for _, tc := range testCases {
 		env, err := mockConfig.GetEnvironment(tc.name)
-		if !tc.error {
-			assert.Nil(t, err)
-		}
-
+		assert.Equal(t, tc.error, err)
 		assert.IsType(t, tc.environment, env)
 	}
 }
@@ -48,19 +46,16 @@ func TestConfig_GetEnvironmentByChannel(t *testing.T) {
 	testCases := []struct {
 		channel     string
 		environment *Environment
-		error       bool
+		error       error
 	}{
-		{"ch1", &mockConfig.Environments[0], false},
-		{"ch2", &mockConfig.Environments[1], false},
-		{"ch3", nil, true},
+		{"ch1", &mockConfig.Environments[0], nil},
+		{"ch2", &mockConfig.Environments[1], nil},
+		{"ch3", nil, errors.New("Environment corresponding to channel 'ch3' not found")},
 	}
 
 	for _, tc := range testCases {
 		env, err := mockConfig.GetEnvironmentByChannel(tc.channel)
-		if !tc.error {
-			assert.Nil(t, err)
-		}
-
+		assert.Equal(t, tc.error, err)
 		assert.IsType(t, tc.environment, env)
 	}
 }

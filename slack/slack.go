@@ -11,11 +11,12 @@ import (
 )
 
 var (
+	Conf         config.Configurator
 	startOptions []slack.Option
 	rtm          *slack.RTM
 	parser       command.SlackCommandParser
 	users        []slack.User
-	Conf         config.Configurator
+	channels     []slack.Channel
 )
 
 func init() {
@@ -34,6 +35,9 @@ func init() {
 func Start() {
 	go rtm.ManageConnection()
 
+	users, _ = rtm.GetUsers()
+	channels, _ = rtm.GetChannels(true)
+
 	for e := range rtm.IncomingEvents {
 		handleEvent(e)
 	}
@@ -48,7 +52,7 @@ func handleEvent(e slack.RTMEvent) {
 			return
 		}
 
-		env, err := Conf.GetEnvironmentByChannel(ev.Channel)
+		env, err := Conf.GetEnvironmentByChannel(getChannel((ev.Channel)).Name)
 		if err != nil {
 			handleError(err, ev.Channel)
 			return
@@ -84,5 +88,15 @@ func getUser(id string) *slack.User {
 		}
 	}
 
-	return nil
+	return &slack.User{}
+}
+
+func getChannel(id string) slack.Channel {
+	for _, channel := range channels {
+		if channel.ID == id {
+			return channel
+		}
+	}
+
+	return slack.Channel{}
 }

@@ -19,7 +19,7 @@ func TestParseCommand(t *testing.T) {
 		{
 			message:  "nomatch",
 			expected: nil,
-			err:      errors.New("unknown command"),
+			err:      errors.New("input does not match command syntax"),
 		},
 		{
 			message:  "!help",
@@ -30,6 +30,11 @@ func TestParseCommand(t *testing.T) {
 			message:  "!deploy",
 			expected: &Deploy{},
 			err:      errors.New("Deploy requires 2 arguments"),
+		},
+		{
+			message:  "!unknown",
+			expected: nil,
+			err:      errors.New("unknown command"),
 		},
 	}
 

@@ -20,13 +20,16 @@ func NewSlackCommandParser() SlackCommandParser {
 }
 
 func (foo SlackCommandParser) Parse(c string) (Command, error) {
-	re, _ := regexp.Compile(`^\` + SlackCommandPrefix + `(?P<command>[a-z]+) ?(?P<args>.*)?`)
+	re, err := regexp.Compile(`^\` + SlackCommandPrefix + `(?P<command>[a-z]+) ?(?P<args>.*)?`)
+	if err != nil {
+		return nil, err
+	}
 
 	keys := re.SubexpNames()
 	vals := re.FindAllStringSubmatch(c, -1)
 
 	if len(vals) == 0 {
-		return nil, errors.New("unknown command")
+		return nil, errors.New("input does not match command syntax")
 	}
 
 	md := map[string]string{}
@@ -43,5 +46,5 @@ func (foo SlackCommandParser) Parse(c string) (Command, error) {
 		return NewDeploy(args)
 	}
 
-	return nil, nil
+	return nil, errors.New("unknown command")
 }

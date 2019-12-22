@@ -7,25 +7,21 @@ Kubot is a Slack integration (bot) for executing deployments.
 [![Docker Build](https://img.shields.io/docker/cloud/automated/dotariel/kubot)](https://hub.docker.com/r/dotariel/kubot)
 [![Docker Pulls](https://img.shields.io/docker/pulls/dotariel/kubot.svg)](https://hub.docker.com/r/dotariel/kubot)
 
-# Local developer setup
-export KUBOT_SLACK_TOKEN=secrettoken
+## Commands
+Kubot's configurable command system allows commands to be declared via configuration.
 
-# TODO
-- Create a docker image to run kubot
-- Inject secrets to pull helm charts, an environment specific slack token, kubit environment, vault secrets
-- Create helm charts for deploying kubot
-- Update kubit toxic job to auto deploy kubot
-- Before running any command, perform an authorization check by verifying the slack user exists in a config file
-- Add a !release <product> command to toxic to perform a make release to increment the version and tag the product
+Example:
+```
+commandConfig:
+  dir: /tmp
 
-# kubot commands
-- !deploy <product> <version>
-
-- !kick <pod>
-- restart a pod
-
-- !restart <product>
-- kubectl -n <product> rollout restart deployment/<product>
+commands: 
+  - name: list
+    commands:
+      - name: "ls"
+        args:
+          - "${dir}"
+```
 
 ## Local Setup
 Kubot configuration is managed through a configuration file located at `KUBOT_CONFIG` (see [sample file](config/resources/kubot.yml)).
@@ -33,5 +29,5 @@ Kubot configuration is managed through a configuration file located at `KUBOT_CO
 ## Docker
 
 ```
-docker run -e KUBOT_SLACK_TOKEN=xxxxx -v config.yml:/config.yml -it dotariel/kubot
+docker run -v config.yml:/config.yml -it dotariel/kubot
 ```

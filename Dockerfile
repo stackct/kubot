@@ -27,7 +27,6 @@ FROM alpine:latest
 LABEL Description="Deployment bot"
 
 ENV KUBOT_CONFIG=/conf/kubot.yml
-ENV KUBOT_SLACK_TOKEN=
 
 RUN apk --update --no-cache add git
 COPY --from=alpine-base /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/

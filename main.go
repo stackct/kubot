@@ -24,8 +24,6 @@ func init() {
 }
 
 func main() {
-	config.InitConfig(os.Getenv("KUBOT_CONFIG"))
-
 	logFile, _ = config.InitLogging("log/kubot.log", "INFO")
 	defer logFile.Close()
 
@@ -33,7 +31,6 @@ func main() {
 }
 
 func run() {
-
 	stop := make(chan os.Signal, 2)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 

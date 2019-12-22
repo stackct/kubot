@@ -28,7 +28,7 @@ func TestExecuteWithValidCommand(t *testing.T) {
 		Body:    "!help",
 	}.Post()
 	AssertResponseCode(t, rr, http.StatusOK)
-	assert.Equal(t, "[\"available commands: [deploy]\"]\n", rr.Body.String())
+	assert.Equal(t, "[\"available commands: [cmd]\"]\n", rr.Body.String())
 }
 
 // Request struct

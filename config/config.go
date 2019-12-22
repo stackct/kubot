@@ -14,14 +14,8 @@ import (
 
 var Conf Configurator
 
-func InitConfig(f string) error {
-	c, err := ParseFile(f)
-	if err != nil {
-		return err
-	}
-
-	Conf = c
-	return nil
+func init() {
+	Conf, _ = ParseFile(os.Getenv("KUBOT_CONFIG"))
 }
 
 func InitLogging(logFilename string, logLevel string) (*os.File, error) {

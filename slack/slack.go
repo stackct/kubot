@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/apex/log"
-	"os"
 
 	"kubot/command"
 	"kubot/config"
@@ -22,17 +21,14 @@ var (
 
 func init() {
 	startOptions = []slack.Option{}
-
-	token := os.Getenv("KUBOT_SLACK_TOKEN")
-	if token == "" {
-		token = config.Conf.GetSlackToken()
-	}
+	token := config.Conf.GetSlackToken()
 	api := slack.New(token, startOptions...)
 	rtm = api.NewRTM()
 	parser = command.NewSlackCommandParser()
 }
 
 func Start() {
+
 	go rtm.ManageConnection()
 
 	users, _ = rtm.GetUsers()

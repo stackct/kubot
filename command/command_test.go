@@ -8,10 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func init() {
-	config.InitConfig("../config/resources/kubot.yml")
-}
-
 func TestParseCommand(t *testing.T) {
 	testCases := []struct {
 		message  string

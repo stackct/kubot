@@ -7,7 +7,7 @@ import (
 type MockConfig struct {
 	MockHasAccess      bool
 	MockHasEnvironment bool
-	MockGetSlackToken  string
+	MockSlackToken     string
 }
 
 type MockConfigOption func(*MockConfig)
@@ -36,7 +36,7 @@ func (c *MockConfig) HasAccess(s string, e string) bool {
 }
 
 func (c *MockConfig) GetSlackToken() string {
-	return c.MockGetSlackToken
+	return c.MockSlackToken
 }
 
 func (c *MockConfig) GetEnvironmentByChannel(ch string) (*Environment, error) {
@@ -48,7 +48,7 @@ func (c *MockConfig) GetEnvironmentByChannel(ch string) (*Environment, error) {
 }
 
 func (c *MockConfig) GetCommands() []string {
-	return []string{"deploy"}
+	return []string{"cmd"}
 }
 
 func (c *MockConfig) GetCommand(name string) (*Command, error) {

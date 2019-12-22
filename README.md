@@ -28,7 +28,7 @@ export KUBOT_SLACK_TOKEN=secrettoken
 - kubectl -n <product> rollout restart deployment/<product>
 
 ## Local Setup
-Kubot configuration is managed through a configuration file located at `KUBOT_CONFIG` (see [sample file](resources/kubot.yml)).
+Kubot configuration is managed through a configuration file located at `KUBOT_CONFIG` (see [sample file](config/resources/kubot.yml)).
 
 ## Docker
 

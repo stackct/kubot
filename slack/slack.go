@@ -3,16 +3,17 @@ package slack
 import (
 	"errors"
 	"fmt"
-	"go.uber.org/zap"
-	"kubot/command"
 	"os"
 
-	"github.com/nlopes/slack"
+	"go.uber.org/zap"
+
+	"kubot/command"
 	"kubot/config"
+
+	"github.com/nlopes/slack"
 )
 
 var (
-	Conf         config.Configurator
 	startOptions []slack.Option
 	rtm          *slack.RTM
 	parser       command.CommandParser
@@ -23,13 +24,11 @@ var (
 var log = config.Log
 
 func init() {
-	Conf, _ = config.ParseFile(os.Getenv("KUBOT_CONFIG"))
-
 	startOptions = []slack.Option{}
 
 	token := os.Getenv("KUBOT_SLACK_TOKEN")
 	if token == "" {
-		token = Conf.GetSlackToken()
+		token = config.Conf.GetSlackToken()
 	}
 	api := slack.New(token, startOptions...)
 	rtm = api.NewRTM()
@@ -58,13 +57,13 @@ func handleEvent(e slack.RTMEvent) {
 			return
 		}
 
-		env, err := Conf.GetEnvironmentByChannel(getChannel((ev.Channel)).Name)
+		env, err := config.Conf.GetEnvironmentByChannel(getChannel((ev.Channel)).Name)
 		if err != nil {
 			handleError(err, ev.Channel)
 			return
 		}
 
-		if !Conf.HasAccess(getUser(ev.User).Profile.Email, env.Name) {
+		if !config.Conf.HasAccess(getUser(ev.User).Profile.Email, env.Name) {
 			handleError(errors.New("Authorization denied"), ev.Channel)
 			return
 		}

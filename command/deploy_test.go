@@ -2,6 +2,7 @@ package command
 
 import (
 	"errors"
+	"kubot/config"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,9 +14,10 @@ func TestNewDeploy(t *testing.T) {
 		error   error
 		command *Deploy
 	}{
-		{args: nil, error: errors.New("Deploy requires 1 argument"), command: nil},
-		{args: []string{}, error: errors.New("Deploy requires 1 argument"), command: nil},
-		{args: []string{"foo"}, error: nil, command: &Deploy{product: "foo"}},
+		{args: nil, error: errors.New("Deploy requires 2 arguments"), command: nil},
+		{args: []string{}, error: errors.New("Deploy requires 2 arguments"), command: nil},
+		{args: []string{"foo"}, error: errors.New("Deploy requires 2 arguments"), command: nil},
+		{args: []string{"foo", "1.0.0"}, error: nil, command: &Deploy{product: "foo", version: "1.0.0"}},
 	}
 
 	for _, tc := range testCases {
@@ -28,8 +30,9 @@ func TestNewDeploy(t *testing.T) {
 
 func TestDeployExecute(t *testing.T) {
 	out := make(chan string)
+	config.Conf = config.NewMockConfig()
 
-	go Deploy{product: "Foo"}.Execute(out)
+	go Deploy{product: "Foo", version: "1.0.0"}.Execute(out)
 
 	assert.Equal(t, "Deploying *Foo*...", <-out)
 	assert.Equal(t, "*Foo* deployment complete", <-out)

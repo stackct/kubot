@@ -8,3 +8,18 @@ environments:
       - john.doe
       - mary.foo
 slackToken: some-token
+
+commandConfig: {
+  productRepo: repo,
+  deployTimeoutSeconds: 900,
+  chartFile: chart,
+}
+
+commands: [
+  {
+    name: deploy,
+    commands: [
+      { name: "echo", args: ["deploy", "${productRepo}/${product}", "--version", "${version}", "--timeout", "${deployTimeoutSeconds}", "-f", "${chartFile}"] },
+    ],
+  }
+]

@@ -1,13 +1,14 @@
 package slack
 
 import (
-	"github.com/stretchr/testify/assert"
 	"kubot/config"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestHasAccess(t *testing.T) {
-	Conf = config.Config{
+	config.Conf = config.Config{
 		Environments: []config.Environment{
 			config.Environment{Name: "e1", Users: []string{"u1"}},
 			config.Environment{Name: "e2", Users: []string{"u2", "u3"}},

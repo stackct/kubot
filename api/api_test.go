@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"fmt"
+	"kubot/config"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -21,6 +22,7 @@ func TestExecuteWithInvalidCommand(t *testing.T) {
 }
 
 func TestExecuteWithValidCommand(t *testing.T) {
+	config.Conf = config.NewMockConfig()
 	rr := Request{T: t,
 		Handler: Execute,
 		Body:    "!help",

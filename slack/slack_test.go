@@ -16,7 +16,7 @@ func init() {
 }
 
 func BeforeEach(t *testing.T) func() {
-	Conf = config.NewMockConfig()
+	config.Conf = config.NewMockConfig()
 
 	users = []slack.User{
 		slack.User{ID: "_user", Profile: slack.UserProfile{Email: "foo@invalid.co"}},
@@ -64,7 +64,7 @@ func TestStart_Wrong_Environment(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		Conf = config.NewMockConfig(tc.option)
+		config.Conf = config.NewMockConfig(tc.option)
 		parser = command.NewMockParser()
 
 		runTest(t, tc.incomingText, tc.outgoingText)
@@ -84,7 +84,7 @@ func TestStart_No_Access(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		Conf = config.NewMockConfig(tc.option)
+		config.Conf = config.NewMockConfig(tc.option)
 		parser = command.NewMockParser()
 
 		runTest(t, tc.incomingText, tc.outgoingText)

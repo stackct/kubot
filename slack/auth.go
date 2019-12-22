@@ -1,5 +1,7 @@
 package slack
 
+import "kubot/config"
+
 func HasAccess(email string, environment string) bool {
-	return Conf.HasAccess(email, environment)
+	return config.Conf.HasAccess(email, environment)
 }

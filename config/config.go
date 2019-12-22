@@ -1,34 +1,50 @@
 package config
 
 import (
+	"errors"
 	"fmt"
-	"go.uber.org/zap"
-	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+
+	"go.uber.org/zap"
+	yaml "gopkg.in/yaml.v2"
 )
 
+var Conf Configurator
 var Log *zap.Logger
 
 func init() {
 	Log, _ = zap.NewProduction()
+	Conf, _ = ParseFile(os.Getenv("KUBOT_CONFIG"))
 }
 
 type Config struct {
-	Environments []Environment `yaml:"environments"`
-	SlackToken   string        `yaml:"slackToken"`
+	Environments  []Environment     `yaml:"environments"`
+	SlackToken    string            `yaml:"slackToken"`
+	CommandConfig map[string]string `yaml:"commandConfig"`
+	Commands      []Command         `yaml:"commands"`
 }
 
 type Configurator interface {
 	HasAccess(id string, env string) bool
 	GetEnvironmentByChannel(ch string) (*Environment, error)
 	GetSlackToken() string
+	GetCommands() []string
+	GetCommand(name string) (*Command, error)
+	GetCommandConfig() map[string]string
 }
 
 type Environment struct {
-	Name       string   `yaml:"name"`
-	Users      []string `yaml:"users"`
-	Channel    string   `yaml:"channel"`
+	Name    string   `yaml:"name"`
+	Users   []string `yaml:"users"`
+	Channel string   `yaml:"channel"`
+}
+
+type Command struct {
+	Name     string            `yaml:"name"`
+	Commands []Command         `yaml:"commands"`
+	Args     []string          `yaml:"args"`
+	Config   map[string]string `yaml:"config"`
 }
 
 func ParseFile(f string) (Configurator, error) {
@@ -101,4 +117,25 @@ func (e Environment) ContainsUser(u string) bool {
 	}
 
 	return false
+}
+
+func (c Config) GetCommands() []string {
+	commands := []string{}
+	for _, cmd := range c.Commands {
+		commands = append(commands, cmd.Name)
+	}
+	return commands
+}
+
+func (c Config) GetCommandConfig() map[string]string {
+	return c.CommandConfig
+}
+
+func (c Config) GetCommand(name string) (*Command, error) {
+	for _, cmd := range c.Commands {
+		if cmd.Name == name {
+			return &cmd, nil
+		}
+	}
+	return nil, errors.New(fmt.Sprintf("command not found: %s", name))
 }

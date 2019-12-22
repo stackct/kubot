@@ -2,9 +2,10 @@ package config
 
 import (
 	"errors"
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var mockConfig Config
@@ -16,12 +17,28 @@ func init() {
 			Environment{Name: "e2", Users: []string{"john.doe", "mary.foo"}, Channel: "ch2"},
 		},
 		SlackToken: "some-token",
+		CommandConfig: map[string]string{
+			"productRepo":          "repo",
+			"deployTimeoutSeconds": "900",
+			"chartFile":            "chart",
+		},
+		Commands: []Command{
+			Command{
+				Name: "deploy",
+				Commands: []Command{
+					Command{
+						Name: "echo",
+						Args: []string{"deploy", "${productRepo}/${product}", "--version", "${version}", "--timeout", "${deployTimeoutSeconds}", "-f", "${chartFile}"},
+					},
+				},
+			},
+		},
 	}
 }
 
 func TestParseFile(t *testing.T) {
-	config, _ := ParseFile("./resources/config.yml")
-
+	config, err := ParseFile("./resources/config.yml")
+	assert.Nil(t, err)
 	assert.True(t, reflect.DeepEqual(config, mockConfig))
 }
 

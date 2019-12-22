@@ -1,9 +1,8 @@
 package command
 
 import (
-	"bytes"
 	"errors"
-	"io"
+	"kubot/config"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,7 +27,7 @@ func TestParseCommand(t *testing.T) {
 		{
 			message:  "!deploy",
 			expected: &Deploy{},
-			err:      errors.New("Deploy requires 1 argument"),
+			err:      errors.New("Deploy requires 2 arguments"),
 		},
 	}
 
@@ -42,29 +41,40 @@ func TestParseCommand(t *testing.T) {
 	}
 }
 
-type TestCommand struct{}
-
-func (t TestCommand) Name() string            { return "mock" }
-func (t TestCommand) Execute(out chan string) {}
-
-func TestExecuteSuccess(t *testing.T) {
-	r, w := io.Pipe()
-	out := make(chan string)
-	buf := new(bytes.Buffer)
-
-	go func() { buf.ReadFrom(r) }()
-	Execute(&TestCommand{}, w, out, "echo", "foo")
-	assert.Equal(t, "foo\n", buf.String())
+func TestStdoutWriter(t *testing.T) {
+	n, err := StdoutWriter{}.Write([]byte("foo"))
+	assert.Nil(t, err)
+	assert.Equal(t, 3, n)
 }
 
-func TestExecuteCommandFails(t *testing.T) {
-	r, w := io.Pipe()
-	out := make(chan string)
-	buf := new(bytes.Buffer)
+func TestStderrWriter(t *testing.T) {
+	n, err := StderrWriter{}.Write([]byte("foo"))
+	assert.Nil(t, err)
+	assert.Equal(t, 3, n)
+}
 
-	go func() { buf.ReadFrom(r) }()
-	go Execute(&TestCommand{}, w, out, "ls", "foo")
+func TestExecuteFailureWhenCommandDoesNotExist(t *testing.T) {
+	err := Execute("foo", map[string]string{})
+	assert.Equal(t, "command not found: foo", err.Error())
+}
 
-	assert.Equal(t, "*mock* command failed", <-out)
-	assert.Equal(t, "ls: cannot access 'foo': No such file or directory\n", buf.String())
+func TestExecuteFailureWhenCommandFails(t *testing.T) {
+	config.Conf = config.NewMockConfig()
+	err := Execute("fail", map[string]string{})
+	assert.Equal(t, "exit status 2", err.Error())
+}
+
+func TestExecuteSuccess(t *testing.T) {
+	config.Conf = config.NewMockConfig()
+	err := Execute("help", map[string]string{})
+	assert.Nil(t, err)
+}
+
+func TestExecuteInterpolatesFromCommandConfig(t *testing.T) {
+	config.Conf = config.NewMockConfig()
+	mockWriter := &config.MockWriter{}
+	CommandStdoutWriter = mockWriter
+	err := Execute("echo", map[string]string{"foo3": "bar3"})
+	assert.Nil(t, err)
+	assert.Equal(t, []string{"foo bar1 bar2 bar3\n"}, mockWriter.Messages)
 }

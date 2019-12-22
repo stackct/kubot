@@ -1,13 +1,14 @@
 package command
 
+import (
+	"fmt"
+	"kubot/config"
+)
+
 type Help struct{}
 
 func NewHelp() (*Help, error) {
 	return &Help{}, nil
-}
-
-func (h Help) Name() string {
-	return "help"
 }
 
 func (h Help) Execute(out chan string) {
@@ -17,5 +18,5 @@ func (h Help) Execute(out chan string) {
 }
 
 func (h Help) Usage() string {
-	return "available commands: [deploy]"
+	return fmt.Sprintf("available commands: %v", config.Conf.GetCommands())
 }

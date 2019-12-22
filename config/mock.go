@@ -5,6 +5,7 @@ import (
 )
 
 type MockConfig struct {
+	Config
 	MockHasAccess      bool
 	MockHasEnvironment bool
 	MockSlackToken     string
@@ -23,6 +24,7 @@ func (c *MockWriter) Write(msg []byte) (n int, err error) {
 
 func NewMockConfig(options ...MockConfigOption) *MockConfig {
 	c := &MockConfig{MockHasAccess: true, MockHasEnvironment: true}
+	c.CommandPrefix = "!"
 
 	for _, option := range options {
 		option(c)

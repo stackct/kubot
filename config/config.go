@@ -34,6 +34,7 @@ type Config struct {
 	Environments  []Environment     `yaml:"environments"`
 	SlackToken    string            `yaml:"slackToken"`
 	Logging       Logging           `yaml:"logging"`
+	CommandPrefix string            `yaml:"commandPrefix"`
 	CommandConfig map[string]string `yaml:"commandConfig"`
 	Commands      []Command         `yaml:"commands"`
 }
@@ -45,6 +46,7 @@ type Configurator interface {
 	GetLogging() Logging
 	GetCommands() []string
 	GetCommand(name string) (*Command, error)
+	GetCommandPrefix() string
 	GetCommandConfig() map[string]string
 }
 
@@ -161,4 +163,8 @@ func (c Config) GetCommand(name string) (*Command, error) {
 		}
 	}
 	return nil, errors.New(fmt.Sprintf("command not found: %s", name))
+}
+
+func (c Config) GetCommandPrefix() string {
+	return c.CommandPrefix
 }

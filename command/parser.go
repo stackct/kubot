@@ -1,5 +1,5 @@
 package command
 
 type CommandParser interface {
-	Parse(string) (Command, error)
+	Parse(input string) (Command, error)
 }

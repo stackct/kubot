@@ -21,6 +21,7 @@ func init() {
 			File:  "kubot.log",
 			Level: "INFO",
 		},
+		CommandPrefix: ".",
 		CommandConfig: map[string]string{
 			"productRepo":          "repo",
 			"deployTimeoutSeconds": "900",

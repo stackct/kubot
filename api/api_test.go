@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"fmt"
+	"kubot/command"
 	"kubot/config"
 	"net/http"
 	"net/http/httptest"
@@ -12,6 +13,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 )
+
+func init() {
+	command.SlackCommandPrefix = "!"
+}
 
 func TestExecuteWithInvalidCommand(t *testing.T) {
 	rr := Request{T: t,

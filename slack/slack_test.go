@@ -13,6 +13,7 @@ var server *MockServer
 
 func init() {
 	server = newMockServer()
+	command.SlackCommandPrefix = "!"
 }
 
 func BeforeEach(t *testing.T) func() {
@@ -41,7 +42,7 @@ func TestStart_Invalid_Command(t *testing.T) {
 		incomingText string
 		outgoingText string
 	}{
-		{ParseError, "any", "unknown command"},
+		{ParseError, "any", ""},
 		{ParseSuccess, "any", "fin"},
 	}
 
@@ -92,6 +93,10 @@ func TestStart_No_Access(t *testing.T) {
 }
 
 func runTest(t *testing.T, incomingText string, outgoingText string) {
+	if outgoingText == "" {
+		return
+	}
+
 	rtm.IncomingEvents <- newMessageEvent(incomingText)
 	rsp, err := server.waitForRequest()
 	if err != nil {

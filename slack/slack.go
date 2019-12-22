@@ -28,7 +28,6 @@ func init() {
 }
 
 func Start() {
-
 	go rtm.ManageConnection()
 
 	users, _ = rtm.GetUsers()
@@ -46,8 +45,7 @@ func handleEvent(e slack.RTMEvent) {
 	case *slack.MessageEvent:
 		cmd, err := parser.Parse(ev.Text)
 		if err != nil {
-			handleError(err, ev.Channel)
-			return
+			return // Fail silently
 		}
 
 		env, err := config.Conf.GetEnvironmentByChannel(getChannel((ev.Channel)).Name)

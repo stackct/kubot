@@ -16,17 +16,19 @@ func init() {
 
 type Config struct {
 	Environments []Environment `yaml:"environments"`
+    SlackToken   string        `yaml:"slackToken"`
 }
 
 type Configurator interface {
 	HasAccess(id string, env string) bool
 	GetEnvironmentByChannel(ch string) (*Environment, error)
+    GetSlackToken() string
 }
 
 type Environment struct {
-	Name    string   `yaml:"name"`
-	Users   []string `yaml:"users"`
-	Channel string   `yaml:"channel"`
+	Name       string   `yaml:"name"`
+	Users      []string `yaml:"users"`
+	Channel    string   `yaml:"channel"`
 }
 
 func ParseFile(f string) (Configurator, error) {
@@ -76,6 +78,10 @@ func (c Config) GetEnvironmentByChannel(ch string) (*Environment, error) {
 	}
 
 	return nil, fmt.Errorf("Environment not found for channel: '%v'", ch)
+}
+
+func (c Config) GetSlackToken() string {
+    return c.SlackToken
 }
 
 func (c Config) HasAccess(user string, env string) bool {

@@ -27,7 +27,11 @@ func init() {
 
 	startOptions = []slack.Option{}
 
-	api := slack.New(os.Getenv("KUBOT_SLACK_TOKEN"), startOptions...)
+    token := os.Getenv("KUBOT_SLACK_TOKEN")
+    if token == "" {
+        token = Conf.GetSlackToken()
+    }
+	api := slack.New(token, startOptions...)
 	rtm = api.NewRTM()
 	parser = command.NewSlackCommandParser()
 }

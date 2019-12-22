@@ -3,9 +3,8 @@ package slack
 import (
 	"errors"
 	"fmt"
+	"github.com/apex/log"
 	"os"
-
-	"go.uber.org/zap"
 
 	"kubot/command"
 	"kubot/config"
@@ -20,8 +19,6 @@ var (
 	users        []slack.User
 	channels     []slack.Channel
 )
-
-var log = config.Log
 
 func init() {
 	startOptions = []slack.Option{}
@@ -47,7 +44,7 @@ func Start() {
 }
 
 func handleEvent(e slack.RTMEvent) {
-	log.Info("incoming event", zap.String("type", fmt.Sprintf("%T", e.Data)))
+	log.WithField("type", fmt.Sprintf("%T", e.Data)).Info("incoming event")
 
 	switch ev := e.Data.(type) {
 	case *slack.MessageEvent:

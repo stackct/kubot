@@ -3,6 +3,7 @@ package command
 import (
 	"errors"
 	"fmt"
+	"github.com/apex/log"
 )
 
 type Deploy struct {

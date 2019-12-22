@@ -3,14 +3,13 @@ package command
 import (
 	"errors"
 	"fmt"
+	"github.com/apex/log"
 	"io"
 	"kubot/config"
 	"os/exec"
 	"regexp"
 	"strings"
 )
-
-var log = config.Log
 
 type Command interface {
 	Execute(output chan string)

@@ -3,8 +3,8 @@ package slack
 import (
 	"errors"
 	"fmt"
+	"github.com/apex/log"
 	"github.com/gorilla/websocket"
-	"go.uber.org/zap"
 	"net/http"
 	"net/http/httptest"
 	"time"
@@ -26,7 +26,7 @@ func newMockServer() *MockServer {
 	http.HandleFunc("/rtm", server.websocket)
 	http.HandleFunc("/rtm.connect", server.connect)
 
-	log.Info("mock server started", zap.String("httpUrl", server.httpURL()), zap.String("wsUrl", server.wsURL()))
+	log.WithField("httpUrl", server.httpURL()).WithField("wsUrl", server.wsURL()).Info("mock server started")
 
 	return server
 }
@@ -59,21 +59,21 @@ func (ms *MockServer) connect(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ms *MockServer) websocket(w http.ResponseWriter, r *http.Request) {
-	log.Debug("handling request", zap.String("url", r.URL.String()))
+	log.WithField("url", r.URL).Debug("handling request")
 
 	upgrader := websocket.Upgrader{
 		CheckOrigin: func(*http.Request) bool { return true },
 	}
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Error("upgrade failed", zap.Error(err))
+		log.WithField("reason", err).Error("upgrade failed")
 	}
 	defer c.Close()
 
 	for {
 		_, message, err := c.ReadMessage()
 		if err != nil {
-			log.Error("read failed", zap.Error(err))
+			log.WithField("reason", err).Error("read failed")
 			break
 		}
 

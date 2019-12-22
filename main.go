@@ -13,6 +13,7 @@ import (
 
 var rootCmd *cobra.Command
 var apiPort string
+var logFile *os.File
 
 func init() {
 	rootCmd = &cobra.Command{
@@ -23,11 +24,16 @@ func init() {
 }
 
 func main() {
+	config.InitConfig(os.Getenv("KUBOT_CONFIG"))
+
+	logFile, _ = config.InitLogging("log/kubot.log", "INFO")
+	defer logFile.Close()
+
 	rootCmd.Execute()
 }
 
 func run() {
-	defer config.Log.Sync()
+
 	stop := make(chan os.Signal, 2)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 

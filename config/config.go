@@ -6,21 +6,40 @@ import (
 	"io/ioutil"
 	"os"
 
-	"go.uber.org/zap"
+	"github.com/apex/log"
+	"github.com/apex/log/handlers/logfmt"
+	"github.com/apex/log/handlers/text"
 	yaml "gopkg.in/yaml.v2"
 )
 
 var Conf Configurator
-var Log *zap.Logger
 
-func init() {
-	Log, _ = zap.NewProduction()
-	Conf, _ = ParseFile(os.Getenv("KUBOT_CONFIG"))
+func InitConfig(f string) error {
+	c, err := ParseFile(f)
+	if err != nil {
+		return err
+	}
+
+	Conf = c
+	return nil
+}
+
+func InitLogging(logFilename string, logLevel string) (*os.File, error) {
+	logFile, err := os.OpenFile(logFilename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err == nil {
+		log.SetHandler(logfmt.New(logFile))
+	} else {
+		log.WithError(err).WithField("logfile", logFilename).Error("Failed to create log file, using console instead")
+		log.SetHandler(text.New(os.Stdout))
+	}
+	log.SetLevelFromString(logLevel)
+	return logFile, err
 }
 
 type Config struct {
 	Environments  []Environment     `yaml:"environments"`
 	SlackToken    string            `yaml:"slackToken"`
+	Logging       Logging           `yaml:"logging"`
 	CommandConfig map[string]string `yaml:"commandConfig"`
 	Commands      []Command         `yaml:"commands"`
 }
@@ -47,6 +66,11 @@ type Command struct {
 	Config   map[string]string `yaml:"config"`
 }
 
+type Logging struct {
+	File  string `yaml:"file"`
+	Level string `yaml:"level"`
+}
+
 func ParseFile(f string) (Configurator, error) {
 	file, err := os.Open(f)
 	if err != nil {
@@ -64,7 +88,7 @@ func ParseFile(f string) (Configurator, error) {
 		return Config{}, err
 	}
 
-	Log.Info("configuration file loaded", zap.String("path", f), zap.Int("environments", len(config.Environments)))
+	log.WithField("path", f).WithField("environments", len(config.Environments)).Info("configuration file loaded")
 
 	return config, nil
 }

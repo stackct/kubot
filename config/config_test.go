@@ -17,6 +17,10 @@ func init() {
 			Environment{Name: "e2", Users: []string{"john.doe", "mary.foo"}, Channel: "ch2"},
 		},
 		SlackToken: "some-token",
+		Logging: Logging{
+			File:  "kubot.log",
+			Level: "INFO",
+		},
 		CommandConfig: map[string]string{
 			"productRepo":          "repo",
 			"deployTimeoutSeconds": "900",
@@ -37,7 +41,7 @@ func init() {
 }
 
 func TestParseFile(t *testing.T) {
-	config, err := ParseFile("./resources/config.yml")
+	config, err := ParseFile("./resources/kubot.yml")
 	assert.Nil(t, err)
 	assert.True(t, reflect.DeepEqual(config, mockConfig))
 }

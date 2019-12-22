@@ -31,8 +31,8 @@ ENV KUBOT_SLACK_TOKEN=
 
 RUN apk --update --no-cache add git
 COPY --from=alpine-base /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=build /build/kubot /
+COPY --from=build /build/kubot /opt/kubot/
 COPY --from=build /usr/local/bin/helm /usr/local/bin
 COPY --from=build /usr/local/bin/kubectl /usr/local/bin
 
-CMD ["/kubot"]
+CMD ["/opt/kubot/kubot"]

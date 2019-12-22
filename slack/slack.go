@@ -39,7 +39,7 @@ func Start() {
 }
 
 func handleEvent(e slack.RTMEvent) {
-	log.WithField("type", fmt.Sprintf("%T", e.Data)).Info("incoming event")
+	log.WithField("type", fmt.Sprintf("%T", e.Data)).Debug("incoming event")
 
 	switch ev := e.Data.(type) {
 	case *slack.MessageEvent:

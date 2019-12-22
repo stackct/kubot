@@ -34,4 +34,6 @@ COPY --from=build /build/kubot /opt/kubot/
 COPY --from=build /usr/local/bin/helm /usr/local/bin
 COPY --from=build /usr/local/bin/kubectl /usr/local/bin
 
+VOLUME ["/opt/kubot/log"]
+
 CMD ["/opt/kubot/kubot"]

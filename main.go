@@ -1,8 +1,10 @@
 package main
 
 import (
+	"github.com/apex/log"
 	"kubot/api"
 	"kubot/config"
+	"kubot/process"
 	"kubot/slack"
 	"os"
 	"os/signal"
@@ -35,8 +37,24 @@ func run() {
 	stop := make(chan os.Signal, 2)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 
+	for _, init := range config.Conf.GetInit() {
+		log.
+			WithField("command", init.Name).
+			WithField("args", init.Args).
+			Info("executing init command")
+
+		if err := process.Start(init.Name, init.Args, config.Conf.GetCommandConfig()); err != nil {
+			log.
+				WithField("command", init.Name).
+				WithField("args", init.Args).
+				WithError(err).
+				Error("init command failed")
+		}
+	}
+
 	go api.Start(apiPort)
 	go slack.Start()
+
 	<-stop
 
 }

@@ -26,7 +26,7 @@ RUN apk --update --no-cache add ca-certificates
 FROM alpine:latest
 LABEL Description="Deployment bot"
 
-ENV KUBOT_CONFIG=/config.yml
+ENV KUBOT_CONFIG=/conf/kubot.yml
 ENV KUBOT_SLACK_TOKEN=
 
 RUN apk --update --no-cache add git

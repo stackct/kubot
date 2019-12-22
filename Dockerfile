@@ -36,4 +36,4 @@ COPY --from=build /usr/local/bin/kubectl /usr/local/bin
 
 VOLUME ["/opt/kubot/log"]
 
-CMD ["/opt/kubot/kubot"]
+ENTRYPOINT [ "/opt/kubot/kubot" ]

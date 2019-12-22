@@ -34,3 +34,8 @@ commands:
           - "${deployTimeoutSeconds}"
           - "-f"
           - "${chartFile}"
+
+init: 
+  - name: "echo"
+    args:
+      - "initialized"

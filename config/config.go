@@ -34,9 +34,10 @@ type Config struct {
 	Environments  []Environment     `yaml:"environments"`
 	SlackToken    string            `yaml:"slackToken"`
 	Logging       Logging           `yaml:"logging"`
-	CommandPrefix string            `yaml:"commandPrefix"`
-	CommandConfig map[string]string `yaml:"commandConfig"`
 	Commands      []Command         `yaml:"commands"`
+	CommandConfig map[string]string `yaml:"commandConfig"`
+	CommandPrefix string            `yaml:"commandPrefix"`
+	Init          []Command         `yaml:"init"`
 }
 
 type Configurator interface {
@@ -44,10 +45,11 @@ type Configurator interface {
 	GetEnvironmentByChannel(ch string) (*Environment, error)
 	GetSlackToken() string
 	GetLogging() Logging
-	GetCommands() []string
 	GetCommand(name string) (*Command, error)
-	GetCommandPrefix() string
+	GetCommands() []string
 	GetCommandConfig() map[string]string
+	GetCommandPrefix() string
+	GetInit() []Command
 }
 
 type Environment struct {
@@ -167,4 +169,8 @@ func (c Config) GetCommand(name string) (*Command, error) {
 
 func (c Config) GetCommandPrefix() string {
 	return c.CommandPrefix
+}
+
+func (c Config) GetInit() []Command {
+	return c.Init
 }

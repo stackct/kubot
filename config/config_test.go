@@ -38,6 +38,9 @@ func init() {
 				},
 			},
 		},
+		Init: []Command{
+			Command{Name: "echo", Args: []string{"initialized"}},
+		},
 	}
 }
 

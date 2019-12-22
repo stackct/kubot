@@ -7,7 +7,7 @@ import (
 type MockConfig struct {
 	MockHasAccess      bool
 	MockHasEnvironment bool
-    MockGetSlackToken  string
+	MockGetSlackToken  string
 }
 
 type MockConfigOption func(*MockConfig)

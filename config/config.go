@@ -16,13 +16,13 @@ func init() {
 
 type Config struct {
 	Environments []Environment `yaml:"environments"`
-    SlackToken   string        `yaml:"slackToken"`
+	SlackToken   string        `yaml:"slackToken"`
 }
 
 type Configurator interface {
 	HasAccess(id string, env string) bool
 	GetEnvironmentByChannel(ch string) (*Environment, error)
-    GetSlackToken() string
+	GetSlackToken() string
 }
 
 type Environment struct {
@@ -81,7 +81,7 @@ func (c Config) GetEnvironmentByChannel(ch string) (*Environment, error) {
 }
 
 func (c Config) GetSlackToken() string {
-    return c.SlackToken
+	return c.SlackToken
 }
 
 func (c Config) HasAccess(user string, env string) bool {

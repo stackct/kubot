@@ -19,7 +19,7 @@ func TestMockConfig_WithOptions(t *testing.T) {
 	c := NewMockConfig(func(mc *MockConfig) {
 		mc.MockHasAccess = false
 		mc.MockHasEnvironment = false
-        mc.MockGetSlackToken = "some-token"
+		mc.MockGetSlackToken = "some-token"
 	})
 
 	assert.False(t, c.HasAccess("foo", "bar"))
@@ -27,5 +27,5 @@ func TestMockConfig_WithOptions(t *testing.T) {
 	env, err := c.GetEnvironmentByChannel("ch")
 	assert.NotNil(t, err)
 	assert.Nil(t, env)
-    assert.Equal(t, "some-token", c.GetSlackToken())
+	assert.Equal(t, "some-token", c.GetSlackToken())
 }

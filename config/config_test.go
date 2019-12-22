@@ -15,7 +15,7 @@ func init() {
 			Environment{Name: "e1", Users: []string{}, Channel: "ch1"},
 			Environment{Name: "e2", Users: []string{"john.doe", "mary.foo"}, Channel: "ch2"},
 		},
-        SlackToken: "some-token",
+		SlackToken: "some-token",
 	}
 }
 

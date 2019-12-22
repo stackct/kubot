@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/apex/log"
-	"github.com/apex/log/handlers/logfmt"
+	"github.com/apex/log/handlers/json"
 	"github.com/apex/log/handlers/text"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -21,7 +21,7 @@ func init() {
 func InitLogging(logFilename string, logLevel string) (*os.File, error) {
 	logFile, err := os.OpenFile(logFilename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err == nil {
-		log.SetHandler(logfmt.New(logFile))
+		log.SetHandler(json.New(logFile))
 	} else {
 		log.WithError(err).WithField("logfile", logFilename).Error("Failed to create log file, using console instead")
 		log.SetHandler(text.New(os.Stdout))
@@ -42,6 +42,7 @@ type Configurator interface {
 	HasAccess(id string, env string) bool
 	GetEnvironmentByChannel(ch string) (*Environment, error)
 	GetSlackToken() string
+	GetLogging() Logging
 	GetCommands() []string
 	GetCommand(name string) (*Command, error)
 	GetCommandConfig() map[string]string
@@ -116,6 +117,10 @@ func (c Config) GetEnvironmentByChannel(ch string) (*Environment, error) {
 
 func (c Config) GetSlackToken() string {
 	return c.SlackToken
+}
+
+func (c Config) GetLogging() Logging {
+	return c.Logging
 }
 
 func (c Config) HasAccess(user string, env string) bool {

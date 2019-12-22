@@ -24,7 +24,8 @@ func init() {
 }
 
 func main() {
-	logFile, _ = config.InitLogging("log/kubot.log", "INFO")
+	logging := config.Conf.GetLogging()
+	logFile, _ = config.InitLogging(logging.File, logging.Level)
 	defer logFile.Close()
 
 	rootCmd.Execute()

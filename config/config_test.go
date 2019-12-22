@@ -81,7 +81,6 @@ func TestConfig_GetEnvironmentByChannel(t *testing.T) {
 		assert.IsType(t, tc.environment, env)
 	}
 }
-
 func TestEnvironment_ContainsUser(t *testing.T) {
 	e := Environment{Users: []string{"u1"}}
 

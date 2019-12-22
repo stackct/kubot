@@ -47,6 +47,10 @@ func (c *MockConfig) GetEnvironmentByChannel(ch string) (*Environment, error) {
 	return nil, errors.New("Environment not found")
 }
 
+func (c *MockConfig) GetLogging() Logging {
+	return Logging{File: "/dev/null", Level: "DEBUG"}
+}
+
 func (c *MockConfig) GetCommands() []string {
 	return []string{"cmd"}
 }

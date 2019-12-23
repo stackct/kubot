@@ -31,3 +31,38 @@ func TestMockConfig_WithOptions(t *testing.T) {
 	assert.Equal(t, "some-token", c.GetSlackToken())
 	assert.Equal(t, []string{"cmd"}, c.GetCommands())
 }
+
+func TestMockConfig_GetCommand(t *testing.T) {
+	testCases := []struct {
+		name    string
+		error   error
+		command *Command
+	}{
+		{"fail", nil, &Command{Name: "fail", Commands: []Command{{Name: "ls", Args: []string{"foo"}}}}},
+		{"echo", nil, &Command{Name: "echo", Commands: []Command{{Name: "echo", Args: []string{"foo", "${foo1}", "${foo2}", "${foo3}"}}}, Config: map[string]string{"foo2": "bar2"}}},
+		{"other", nil, &Command{}},
+	}
+
+	c := NewMockConfig()
+
+	for _, tc := range testCases {
+		cmd, err := c.GetCommand(tc.name)
+		assert.Equal(t, tc.error, err)
+		assert.Equal(t, tc.command, cmd)
+	}
+}
+
+func TestMockConfig_GetLogging(t *testing.T) {
+	assert.Equal(t, Logging{File: "/dev/null", Level: "DEBUG"}, NewMockConfig().GetLogging())
+}
+
+func TestMockConfig_GetCommandConfig(t *testing.T) {
+	assert.Equal(t, map[string]string{"foo1": "bar1"}, NewMockConfig().GetCommandConfig())
+}
+func TestMockWriter(t *testing.T) {
+	w := MockWriter{}
+	n, err := w.Write([]byte("ok"))
+
+	assert.Nil(t, err)
+	assert.Equal(t, 2, n)
+}

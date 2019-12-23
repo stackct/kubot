@@ -52,12 +52,6 @@ type Configurator interface {
 	GetInit() []Command
 }
 
-type Environment struct {
-	Name    string   `yaml:"name"`
-	Users   []string `yaml:"users"`
-	Channel string   `yaml:"channel"`
-}
-
 type Command struct {
 	Name     string            `yaml:"name"`
 	Commands []Command         `yaml:"commands"`
@@ -134,16 +128,6 @@ func (c Config) HasAccess(user string, env string) bool {
 	}
 
 	return e.ContainsUser(user)
-}
-
-func (e Environment) ContainsUser(u string) bool {
-	for _, user := range e.Users {
-		if user == u {
-			return true
-		}
-	}
-
-	return false
 }
 
 func (c Config) GetCommands() []string {

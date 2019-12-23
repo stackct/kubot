@@ -6,7 +6,7 @@ import (
 )
 
 type Command interface {
-	Execute(output chan string)
+	Execute(output chan string, context Context)
 }
 
 func Execute(name string, configOverrides map[string]string) error {

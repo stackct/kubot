@@ -6,7 +6,7 @@ func (mc MockCommand) Name() string {
 	return "Mock"
 }
 
-func (mc MockCommand) Execute(output chan string) {
+func (mc MockCommand) Execute(output chan string, context Context) {
 	defer close(output)
 	output <- "fin"
 }

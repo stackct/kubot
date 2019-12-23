@@ -43,24 +43,30 @@ func handleEvent(e slack.RTMEvent) {
 
 	switch ev := e.Data.(type) {
 	case *slack.MessageEvent:
+
 		cmd, err := parser.Parse(ev.Text)
 		if err != nil {
 			return // Fail silently
 		}
 
-		env, err := config.Conf.GetEnvironmentByChannel(getChannel((ev.Channel)).Name)
+		env, err := config.Conf.GetEnvironmentByChannel(GetChannel((ev.Channel)).Name)
 		if err != nil {
 			handleError(err, ev.Channel)
 			return
 		}
 
-		if !config.Conf.HasAccess(getUser(ev.User).Profile.Email, env.Name) {
-			handleError(errors.New("Authorization denied"), ev.Channel)
+		context := command.Context{
+			Environment: *env,
+			User:        GetUser(ev.User).Name,
+		}
+
+		if !config.Conf.HasAccess(GetUser(ev.User).Profile.Email, env.Name) {
+			handleError(errors.New("Access denied"), ev.Channel)
 			return
 		}
 
 		out := make(chan string)
-		go cmd.Execute(out)
+		go cmd.Execute(out, context)
 
 		for msg := range out {
 			rtm.SendMessage(rtm.NewOutgoingMessage(msg, ev.Channel))
@@ -72,7 +78,7 @@ func handleError(err error, channel string) {
 	rtm.SendMessage(rtm.NewOutgoingMessage(err.Error(), channel))
 }
 
-func getUser(id string) *slack.User {
+func GetUser(id string) *slack.User {
 	for _, user := range users {
 		if user.ID == id {
 			return &user
@@ -82,7 +88,7 @@ func getUser(id string) *slack.User {
 	return &slack.User{}
 }
 
-func getChannel(id string) slack.Channel {
+func GetChannel(id string) slack.Channel {
 	for _, channel := range channels {
 		if channel.ID == id {
 			return channel

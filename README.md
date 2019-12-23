@@ -1,5 +1,6 @@
-# kubot
-Kubot is a Slack integration (bot) for executing deployments.
+# ![kubot][logo] kubot
+ Kubot is a Slack integration (bot) for executing deployments.
+
 
 [![Build Status](https://travis-ci.org/dotariel/kubot.svg?branch=master)](https://travis-ci.org/dotariel/kubot)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dotariel/kubot)](https://goreportcard.com/report/github.com/dotariel/kubot)
@@ -31,3 +32,5 @@ Kubot configuration is managed through a configuration file located at `KUBOT_CO
 ```
 docker run -v config.yml:/config.yml -it dotariel/kubot
 ```
+
+[logo]: assets/kubot-24x24.png "kubot"

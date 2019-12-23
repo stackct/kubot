@@ -2,6 +2,8 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/acaloiaro/slack v0.6.3-0.20191210002151-2cc5dc1c8f87 h1:ekCWeW0p7Q3ziX/F59qAJy9algUa/hlyGGYy+WWjpRc=
 github.com/acaloiaro/slack v0.6.3-0.20191210002151-2cc5dc1c8f87/go.mod h1:JzQ9m3PMAqcpeCam7UaHSuBuupz7CmpjehYMayT6YOk=
+github.com/acaloiaro/slack v0.6.3 h1:3qO/psF1XMAYD8Q67RbdnRLa1qNupSdA1TB9PQtWrbA=
+github.com/acaloiaro/slack v0.6.3/go.mod h1:3oqZLevjlFjJuMPy2yVe/hMFdgCk55MnTi1gxVPjwm8=
 github.com/apex/log v1.1.1 h1:BwhRZ0qbjYtTob0I+2M+smavV0kOC8XgcnGZcyL9liA=
 github.com/apex/log v1.1.1/go.mod h1:Ls949n1HFtXfbDcjiTTFQqkVUrte0puoIBfO3SVgwOA=
 github.com/aphistic/golf v0.0.0-20180712155816-02c07f170c5a/go.mod h1:3NqKYiepwy8kCu4PNA+aP7WUV72eXWJeP9/r3/K9aLE=

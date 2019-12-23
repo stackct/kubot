@@ -11,7 +11,7 @@ func NewHelp() (*Help, error) {
 	return &Help{}, nil
 }
 
-func (h Help) Execute(out chan string) {
+func (h Help) Execute(out chan string, context Context) {
 	defer close(out)
 
 	out <- h.Usage()

@@ -22,3 +22,17 @@ func TestMockParser_With_Options(t *testing.T) {
 	assert.Nil(t, cmd)
 	assert.Equal(t, "oops", err.Error())
 }
+
+func TestMockCommand_Name(t *testing.T) {
+	c := MockCommand{}
+
+	assert.Equal(t, "Mock", c.Name())
+}
+
+func TestMockCommand_Execute(t *testing.T) {
+	out := make(chan string)
+	c := MockCommand{}
+
+	go c.Execute(out, Context{})
+	assert.Equal(t, "fin", <-out)
+}

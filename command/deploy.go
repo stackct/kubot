@@ -18,11 +18,11 @@ func NewDeploy(args []string) (*Deploy, error) {
 	return &Deploy{product: args[0], version: args[1]}, nil
 }
 
-func (d Deploy) Execute(out chan string) {
+func (d Deploy) Execute(out chan string, context Context) {
 	defer close(out)
 
-	out <- fmt.Sprintf("Deploying *%s*...", d.product)
-	if err := Execute("deploy", map[string]string{"product": d.product, "version": d.version}); err != nil {
+	out <- fmt.Sprintf("Deploying *%s* (%s)...", d.product, context.Environment.Name)
+	if err := Execute("deploy", map[string]string{"product": d.product, "version": d.version, "environment": context.Environment.Name}); err != nil {
 		log.Error(err.Error())
 		out <- fmt.Sprintf("*%s* deployment failed", d.product)
 		return

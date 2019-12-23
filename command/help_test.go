@@ -17,5 +17,5 @@ func TestHelpExecute(t *testing.T) {
 		}
 	}()
 
-	Help{}.Execute(out)
+	Help{}.Execute(out, Context{Environment: config.Environment{}})
 }

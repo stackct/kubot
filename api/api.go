@@ -6,6 +6,7 @@ import (
 	"github.com/apex/log"
 	"io/ioutil"
 	"kubot/command"
+	"kubot/config"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -31,7 +32,7 @@ func Execute(w http.ResponseWriter, r *http.Request) {
 	}
 
 	out := make(chan string)
-	go cmd.Execute(out)
+	go cmd.Execute(out, command.Context{Environment: config.Environment{Name: "localhost"}})
 	var messages []string
 	for msg := range out {
 		log.Info(msg)

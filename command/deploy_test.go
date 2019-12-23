@@ -28,12 +28,12 @@ func TestNewDeploy(t *testing.T) {
 	}
 }
 
-func TestDeployExecute(t *testing.T) {
+func TestDeploy_Execute(t *testing.T) {
 	out := make(chan string)
 	config.Conf = config.NewMockConfig()
 
-	go Deploy{product: "Foo", version: "1.0.0"}.Execute(out)
+	go Deploy{product: "Foo", version: "1.0.0"}.Execute(out, Context{Environment: config.Environment{Name: "local"}})
 
-	assert.Equal(t, "Deploying *Foo*...", <-out)
+	assert.Equal(t, "Deploying *Foo* (local)...", <-out)
 	assert.Equal(t, "*Foo* deployment complete", <-out)
 }

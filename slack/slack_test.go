@@ -80,7 +80,7 @@ func TestStart_No_Access(t *testing.T) {
 		incomingText string
 		outgoingText string
 	}{
-		{NoAccess, "!cmd", "Authorization denied"},
+		{NoAccess, "!cmd", "Access denied"},
 		{FullAccess, "!cmd", "fin"},
 	}
 
@@ -89,6 +89,47 @@ func TestStart_No_Access(t *testing.T) {
 		parser = command.NewMockParser()
 
 		runTest(t, tc.incomingText, tc.outgoingText)
+	}
+}
+
+func TestGetUser(t *testing.T) {
+	users = []slack.User{
+		slack.User{ID: "u1", Name: "user1"},
+		slack.User{ID: "u2", Name: "user2"},
+	}
+
+	testCases := []struct {
+		id       string
+		expected string
+	}{
+		{"u1", "user1"},
+		{"u2", "user2"},
+		{"unknown", ""},
+	}
+
+	for _, tc := range testCases {
+		assert.Equal(t, GetUser(tc.id).Name, tc.expected)
+	}
+}
+
+func TestGetChannel(t *testing.T) {
+
+	channels = []slack.Channel{
+		makeChannel("ch1", "channel1"),
+		makeChannel("ch2", "channel2"),
+	}
+
+	testCases := []struct {
+		id       string
+		expected string
+	}{
+		{"ch1", "channel1"},
+		{"ch2", "channel2"},
+		{"unknown", ""},
+	}
+
+	for _, tc := range testCases {
+		assert.Equal(t, GetChannel(tc.id).Name, tc.expected)
 	}
 }
 
@@ -105,4 +146,12 @@ func runTest(t *testing.T, incomingText string, outgoingText string) {
 	msg := getOutgoingMessage(rsp)
 
 	assert.Equal(t, outgoingText, msg.Text)
+}
+
+func makeChannel(id string, name string) slack.Channel {
+	ch := slack.Channel{}
+	ch.ID = id
+	ch.Name = name
+
+	return ch
 }

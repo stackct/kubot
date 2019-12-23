@@ -2,7 +2,6 @@ package slack
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/nlopes/slack"
 	"kubot/command"
 	"kubot/config"
@@ -42,8 +41,13 @@ func ParseSuccess(mp *command.MockParser) {
 	mp.MockCommand = command.MockCommand{}
 }
 
-func ParseError(mp *command.MockParser) {
-	mp.MockError = errors.New("unknown command")
+func ParseUnknownCommandError(mp *command.MockParser) {
+	mp.MockError = command.NewUnknownCommandError("unknown command")
+	mp.MockCommand = nil
+}
+
+func ParseCommandArgumentError(mp *command.MockParser) {
+	mp.MockError = command.NewCommandArgumentError("command argument error")
 	mp.MockCommand = nil
 }
 

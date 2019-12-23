@@ -34,7 +34,7 @@ func Teardown() {
 	parser = command.NewSlackCommandParser()
 }
 
-func TestStart_Invalid_Command(t *testing.T) {
+func TestStart_Parse_Command_Error(t *testing.T) {
 	defer BeforeEach(t)()
 
 	testCases := []struct {
@@ -42,7 +42,8 @@ func TestStart_Invalid_Command(t *testing.T) {
 		incomingText string
 		outgoingText string
 	}{
-		{ParseError, "any", ""},
+		{ParseUnknownCommandError, "any", ""},
+		{ParseCommandArgumentError, "any", "command argument error"},
 		{ParseSuccess, "any", "fin"},
 	}
 
@@ -144,6 +145,8 @@ func runTest(t *testing.T, incomingText string, outgoingText string) {
 		t.Fatal(err)
 	}
 	msg := getOutgoingMessage(rsp)
+
+	// t.Fatalf("outgoing msg: %v\n", msg.Text)
 
 	assert.Equal(t, outgoingText, msg.Text)
 }

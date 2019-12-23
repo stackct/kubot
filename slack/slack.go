@@ -49,7 +49,7 @@ func handleEvent(e slack.RTMEvent) {
 		cmd, err := parser.Parse(ev.Text)
 		if err != nil {
 			if _, ok := err.(*command.UnknownCommandError); ok {
-				return // Fail silently
+				return
 			}
 			if err, ok := err.(*command.CommandArgumentError); ok {
 				handleError(err, ev.Channel, context)
@@ -87,7 +87,6 @@ func handleError(err error, channel string, context command.Context) {
 		WithField("user", context.User).
 		WithError(err).
 		Error("error while processing incoming event")
-
 	rtm.SendMessage(rtm.NewOutgoingMessage(err.Error(), channel))
 }
 

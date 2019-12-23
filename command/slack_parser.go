@@ -8,22 +8,6 @@ import (
 
 var SlackCommandPrefix string
 
-type UnknownCommandError struct {
-	err string
-}
-
-func (e UnknownCommandError) Error() string {
-	return e.err
-}
-
-type CommandArgumentError struct {
-	err string
-}
-
-func (e CommandArgumentError) Error() string {
-	return e.err
-}
-
 type SlackCommandParser struct{}
 
 func init() {

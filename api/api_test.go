@@ -18,7 +18,7 @@ func init() {
 	command.SlackCommandPrefix = "!"
 }
 
-func TestExecuteWithInvalidCommand(t *testing.T) {
+func TestExecute_WithInvalidCommand(t *testing.T) {
 	rr := Request{T: t,
 		Handler: Execute,
 		Body:    "foo",
@@ -26,7 +26,7 @@ func TestExecuteWithInvalidCommand(t *testing.T) {
 	AssertResponseCode(t, rr, http.StatusInternalServerError)
 }
 
-func TestExecuteWithValidCommand(t *testing.T) {
+func TestExecute_WithValidCommand(t *testing.T) {
 	config.Conf = config.NewMockConfig()
 	rr := Request{T: t,
 		Handler: Execute,

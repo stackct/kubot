@@ -1,7 +1,6 @@
 package command
 
 import (
-	"errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -19,7 +18,7 @@ func TestParseCommand(t *testing.T) {
 		{
 			message:  "nomatch",
 			expected: nil,
-			err:      errors.New("input does not match command syntax"),
+			err:      &UnknownCommandError{"input does not match command syntax"},
 		},
 		{
 			message:  "!help",
@@ -29,12 +28,12 @@ func TestParseCommand(t *testing.T) {
 		{
 			message:  "!deploy",
 			expected: &Deploy{},
-			err:      errors.New("Deploy requires 2 arguments"),
+			err:      &CommandArgumentError{"Deploy requires 2 arguments"},
 		},
 		{
 			message:  "!unknown",
 			expected: nil,
-			err:      errors.New("unknown command"),
+			err:      &UnknownCommandError{"unknown command"},
 		},
 	}
 

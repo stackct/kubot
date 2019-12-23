@@ -1,7 +1,6 @@
 package command
 
 import (
-	"errors"
 	"fmt"
 	"github.com/apex/log"
 )
@@ -13,7 +12,7 @@ type Deploy struct {
 
 func NewDeploy(args []string) (*Deploy, error) {
 	if args == nil || len(args) != 2 {
-		return nil, errors.New("Deploy requires 2 arguments")
+		return nil, &CommandArgumentError{"Deploy requires 2 arguments"}
 	}
 	return &Deploy{product: args[0], version: args[1]}, nil
 }

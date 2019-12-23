@@ -1,13 +1,28 @@
 package command
 
 import (
-	"errors"
 	"kubot/config"
 	"regexp"
 	"strings"
 )
 
 var SlackCommandPrefix string
+
+type UnknownCommandError struct {
+	err string
+}
+
+func (e UnknownCommandError) Error() string {
+	return e.err
+}
+
+type CommandArgumentError struct {
+	err string
+}
+
+func (e CommandArgumentError) Error() string {
+	return e.err
+}
 
 type SlackCommandParser struct{}
 
@@ -29,7 +44,7 @@ func (foo SlackCommandParser) Parse(c string) (Command, error) {
 	vals := re.FindAllStringSubmatch(c, -1)
 
 	if len(vals) == 0 {
-		return nil, errors.New("input does not match command syntax")
+		return nil, &UnknownCommandError{"input does not match command syntax"}
 	}
 
 	md := map[string]string{}
@@ -46,5 +61,5 @@ func (foo SlackCommandParser) Parse(c string) (Command, error) {
 		return NewDeploy(args)
 	}
 
-	return nil, errors.New("unknown command")
+	return nil, &UnknownCommandError{"unknown command"}
 }

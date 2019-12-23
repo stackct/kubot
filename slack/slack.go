@@ -40,30 +40,36 @@ func Start() {
 
 func handleEvent(e slack.RTMEvent) {
 	log.WithField("type", fmt.Sprintf("%T", e.Data)).Debug("incoming event")
+	context := command.Context{}
 
 	switch ev := e.Data.(type) {
 	case *slack.MessageEvent:
+		context.User = GetUser(ev.User).Name
 
 		cmd, err := parser.Parse(ev.Text)
 		if err != nil {
-			return // Fail silently
+			if _, ok := err.(*command.UnknownCommandError); ok {
+				return // Fail silently
+			}
+			if err, ok := err.(*command.CommandArgumentError); ok {
+				handleError(err, ev.Channel, context)
+				return
+			}
 		}
 
 		env, err := config.Conf.GetEnvironmentByChannel(GetChannel((ev.Channel)).Name)
 		if err != nil {
-			handleError(err, ev.Channel)
+			handleError(err, ev.Channel, context)
 			return
 		}
-
-		context := command.Context{
-			Environment: *env,
-			User:        GetUser(ev.User).Name,
-		}
+		context.Environment = *env
 
 		if !config.Conf.HasAccess(GetUser(ev.User).Profile.Email, env.Name) {
-			handleError(errors.New("Access denied"), ev.Channel)
+			handleError(errors.New("Access denied"), ev.Channel, context)
 			return
 		}
+
+		log.Info(context.User)
 
 		out := make(chan string)
 		go cmd.Execute(out, context)
@@ -74,7 +80,14 @@ func handleEvent(e slack.RTMEvent) {
 	}
 }
 
-func handleError(err error, channel string) {
+func handleError(err error, channel string, context command.Context) {
+	log.
+		WithField("channel", channel).
+		WithField("environment", context.Environment.Name).
+		WithField("user", context.User).
+		WithError(err).
+		Error("error while processing incoming event")
+
 	rtm.SendMessage(rtm.NewOutgoingMessage(err.Error(), channel))
 }
 

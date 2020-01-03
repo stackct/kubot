@@ -30,9 +30,12 @@ func (w StderrWriter) Write(msg []byte) (n int, err error) {
 }
 
 func Start(name string, args []string, replacementArgs map[string]string) error {
-	cmd := exec.Command(name, Interpolate(args, replacementArgs)...)
+	resolvedArgs := Interpolate(args, replacementArgs)
+	cmd := exec.Command(name, resolvedArgs...)
 	cmd.Stdout = CommandStdoutWriter
 	cmd.Stderr = CommandStderrWriter
+
+	log.WithField("name", name).WithField("args", resolvedArgs).Info("executing command")
 
 	if err := cmd.Start(); err != nil {
 		return err

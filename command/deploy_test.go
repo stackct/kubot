@@ -33,6 +33,6 @@ func TestDeploy_Execute(t *testing.T) {
 
 	go Deploy{product: "Foo", version: "1.0.0"}.Execute(out, Context{Environment: config.Environment{Name: "local"}})
 
-	assert.Equal(t, "Deploying *Foo* (local)...", <-out)
-	assert.Equal(t, "*Foo* deployment complete", <-out)
+	assert.Equal(t, "Deploying *Foo-1.0.0* to *local* environment...", <-out)
+	assert.Equal(t, "*Foo-1.0.0* was successfully deployed.", <-out)
 }

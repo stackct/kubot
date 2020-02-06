@@ -13,10 +13,11 @@ func TestNewDeploy(t *testing.T) {
 		error   error
 		command *Deploy
 	}{
-		{args: nil, error: &CommandArgumentError{"Deploy requires 2 arguments"}, command: nil},
-		{args: []string{}, error: &CommandArgumentError{"Deploy requires 2 arguments"}, command: nil},
-		{args: []string{"foo"}, error: &CommandArgumentError{"Deploy requires 2 arguments"}, command: nil},
-		{args: []string{"foo", "1.0.0"}, error: nil, command: &Deploy{product: "foo", version: "1.0.0"}},
+		{args: nil, error: &CommandArgumentError{"usage: deploy <product> <version> [release]"}, command: nil},
+		{args: []string{}, error: &CommandArgumentError{"usage: deploy <product> <version> [release]"}, command: nil},
+		{args: []string{"foo"}, error: &CommandArgumentError{"usage: deploy <product> <version> [release]"}, command: nil},
+		{args: []string{"foo", "1.0.0"}, error: nil, command: &Deploy{product: "foo", version: "1.0.0", release: "foo"}},
+		{args: []string{"foo", "1.0.0", "bar"}, error: nil, command: &Deploy{product: "foo", version: "1.0.0", release: "bar"}},
 	}
 
 	for _, tc := range testCases {

@@ -28,7 +28,7 @@ func TestParseCommand(t *testing.T) {
 		{
 			message:  "!deploy",
 			expected: &Deploy{},
-			err:      &CommandArgumentError{"Deploy requires 2 arguments"},
+			err:      &CommandArgumentError{"usage: deploy <product> <version> [release]"},
 		},
 		{
 			message:  "!unknown",

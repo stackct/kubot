@@ -8,13 +8,25 @@ import (
 type Deploy struct {
 	product string
 	version string
+	release string
 }
 
 func NewDeploy(args []string) (*Deploy, error) {
-	if args == nil || len(args) != 2 {
-		return nil, &CommandArgumentError{"Deploy requires 2 arguments"}
+	if args == nil || len(args) < 2 {
+		return nil, &CommandArgumentError{"usage: deploy <product> <version> [release]"}
 	}
-	return &Deploy{product: args[0], version: args[1]}, nil
+
+	deploy := &Deploy{
+		product: args[0],
+		version: args[1],
+		release: args[0],
+	}
+
+	if len(args) > 2 {
+		deploy.release = args[2]
+	}
+
+	return deploy, nil
 }
 
 func (d Deploy) Execute(out chan string, context Context) {
@@ -22,7 +34,7 @@ func (d Deploy) Execute(out chan string, context Context) {
 
 	out <- fmt.Sprintf("Deploying *%s-%s* to *%s* environment...", d.product, d.version, context.Environment.Name)
 
-	if err := Execute("deploy", map[string]string{"product": d.product, "release": context.Environment.Release, "version": d.version, "environment": context.Environment.Name}); err != nil {
+	if err := Execute("deploy", map[string]string{"product": d.product, "version": d.version, "release": d.release, "environment": context.Environment.Name}); err != nil {
 		log.Error(err.Error())
 		out <- fmt.Sprintf("*%s* deployment failed", d.product)
 		return

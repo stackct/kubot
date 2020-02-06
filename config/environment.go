@@ -2,7 +2,6 @@ package config
 
 type Environment struct {
 	Name    string   `yaml:"name"`
-	Release string   `yaml:"release"`
 	Users   []string `yaml:"users"`
 	Channel string   `yaml:"channel"`
 }

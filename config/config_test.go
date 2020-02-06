@@ -15,8 +15,8 @@ var mockConfig Config
 func init() {
 	mockConfig = Config{
 		Environments: []Environment{
-			Environment{Name: "e1", Release: "r1", Users: []string{}, Channel: "ch1"},
-			Environment{Name: "e2", Release: "r2", Users: []string{"john.doe", "mary.foo"}, Channel: "ch2"},
+			Environment{Name: "e1", Users: []string{}, Channel: "ch1"},
+			Environment{Name: "e2", Users: []string{"john.doe", "mary.foo"}, Channel: "ch2"},
 		},
 		SlackToken: "some-token",
 		Logging: Logging{

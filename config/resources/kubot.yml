@@ -1,10 +1,8 @@
 environments:
   - name: e1
-    release: r1
     channel: ch1
     users: []
   - name: e2
-    release: r2
     channel: ch2
     users:
       - john.doe

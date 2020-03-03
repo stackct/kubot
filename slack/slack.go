@@ -34,7 +34,7 @@ func Start() {
 	channels, _ = rtm.GetChannels(true)
 
 	for e := range rtm.IncomingEvents {
-		handleEvent(e)
+		go handleEvent(e)
 	}
 }
 

@@ -139,7 +139,11 @@ func (c Config) GetCommands() []string {
 }
 
 func (c Config) GetCommandConfig() map[string]string {
-	return c.CommandConfig
+	config := map[string]string{}
+	for k, v := range c.CommandConfig {
+		config[k] = v
+	}
+	return config
 }
 
 func (c Config) GetCommand(name string) (*Command, error) {

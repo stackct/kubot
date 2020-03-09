@@ -159,11 +159,16 @@ func TestConfig_GetCommands(t *testing.T) {
 	assert.Equal(t, []string{"cmd1", "cmd2"}, c.GetCommands())
 }
 
-func TestConfig_GetCommandConfig(t *testing.T) {
-	cfg := map[string]string{"foo": "bar"}
-	c := Config{CommandConfig: cfg}
+func TestConfig_GetCommandConfig_Is_Thread_Safe(t *testing.T) {
+	data := map[string]string{"foo": "bar"}
+	config := Config{CommandConfig: data}
 
-	assert.Equal(t, cfg, c.GetCommandConfig())
+	commandConfig := config.GetCommandConfig()
+	assert.Equal(t, data, commandConfig)
+
+	commandConfig["foo"] = "baz"
+	commandConfig = config.GetCommandConfig()
+	assert.Equal(t, "bar", commandConfig["foo"])
 }
 
 func TestConfig_GetCommand(t *testing.T) {

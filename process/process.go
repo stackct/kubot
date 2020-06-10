@@ -2,49 +2,25 @@ package process
 
 import (
 	"fmt"
-	"github.com/apex/log"
-	"io"
 	"os/exec"
+	"runtime/debug"
 	"strings"
+
+	"github.com/apex/log"
 )
-
-type StdoutWriter struct{}
-type StderrWriter struct{}
-
-var CommandStdoutWriter io.Writer
-var CommandStderrWriter io.Writer
-
-func init() {
-	CommandStdoutWriter = &StdoutWriter{}
-	CommandStderrWriter = &StderrWriter{}
-}
-
-func (w StdoutWriter) Write(msg []byte) (n int, err error) {
-	log.Info(string(msg))
-	return len(msg), nil
-}
-
-func (w StderrWriter) Write(msg []byte) (n int, err error) {
-	log.Error(string(msg))
-	return len(msg), nil
-}
 
 func Start(name string, args []string, replacementArgs map[string]string) error {
 	resolvedArgs := Interpolate(args, replacementArgs)
-	cmd := exec.Command(name, resolvedArgs...)
-	cmd.Stdout = CommandStdoutWriter
-	cmd.Stderr = CommandStderrWriter
-
 	log.WithField("name", name).WithField("args", resolvedArgs).Info("executing command")
+	out, err := exec.Command(name, resolvedArgs...).Output()
 
-	if err := cmd.Start(); err != nil {
-		return err
+	logEntry := log.WithField("name", name).WithField("args", resolvedArgs).WithField("stdout", string(out))
+	if nil != err {
+		logEntry.WithError(err).WithField("stackTrace", string(debug.Stack())).Error("command failed")
+	} else {
+		logEntry.Info("command completed")
 	}
-	if err := cmd.Wait(); err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func Interpolate(args []string, replacementArgs map[string]string) []string {

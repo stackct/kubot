@@ -68,12 +68,3 @@ func (c *MockConfig) GetCommand(name string) (*Command, error) {
 func (c *MockConfig) GetCommandConfig() map[string]string {
 	return map[string]string{"foo1": "bar1"}
 }
-
-type MockWriter struct {
-	Messages []string
-}
-
-func (c *MockWriter) Write(msg []byte) (n int, err error) {
-	c.Messages = append(c.Messages, string(msg))
-	return len(msg), nil
-}

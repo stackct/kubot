@@ -27,6 +27,14 @@ commands:
 ## Local Setup
 Kubot configuration is managed through a configuration file located at `KUBOT_CONFIG` (see [sample file](config/resources/kubot.yml)).
 
+## API Setup
+Kubot can be configured to listen for slack commands on a local port for easier developer testing.
+
+```
+kubot -p 8080
+curl -X POST --data ".deploy foo 1.0.0" http://localhost:8080
+```
+
 ## Docker
 
 ```

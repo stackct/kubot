@@ -59,10 +59,3 @@ func TestMockConfig_GetLogging(t *testing.T) {
 func TestMockConfig_GetCommandConfig(t *testing.T) {
 	assert.Equal(t, map[string]string{"foo1": "bar1"}, NewMockConfig().GetCommandConfig())
 }
-func TestMockWriter(t *testing.T) {
-	w := MockWriter{}
-	n, err := w.Write([]byte("ok"))
-
-	assert.Nil(t, err)
-	assert.Equal(t, 2, n)
-}

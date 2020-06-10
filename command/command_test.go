@@ -2,7 +2,6 @@ package command
 
 import (
 	"kubot/config"
-	"kubot/process"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -27,9 +26,6 @@ func TestExecute_Success(t *testing.T) {
 
 func TestExecute_Interpolates_From_Command_Config(t *testing.T) {
 	config.Conf = config.NewMockConfig()
-	mockWriter := &config.MockWriter{}
-	process.CommandStdoutWriter = mockWriter
 	err := Execute("echo", map[string]string{"foo3": "bar3"})
 	assert.Nil(t, err)
-	assert.Equal(t, []string{"foo bar1 bar2 bar3\n"}, mockWriter.Messages)
 }

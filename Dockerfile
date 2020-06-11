@@ -25,10 +25,31 @@ RUN apk --update --no-cache add ca-certificates
 # Production image container
 FROM alpine:latest
 LABEL Description="Deployment bot"
+ARG MSSQL_VERSION=17.5.2.1-1
 
 ENV KUBOT_CONFIG=/conf/kubot.yml
 
 RUN apk --update --no-cache add git
+
+RUN apk add --no-cache curl gnupg --virtual .build-dependencies -- && \
+    # Adding custom MS repository for mssql-tools and msodbcsql
+    curl -O https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_${MSSQL_VERSION}_amd64.apk && \
+    curl -O https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/mssql-tools_${MSSQL_VERSION}_amd64.apk && \
+    # Verifying signature
+    curl -O https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_${MSSQL_VERSION}_amd64.sig && \
+    curl -O https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/mssql-tools_${MSSQL_VERSION}_amd64.sig && \
+    # Importing gpg key
+    curl https://packages.microsoft.com/keys/microsoft.asc  | gpg --import - && \
+    gpg --verify msodbcsql17_${MSSQL_VERSION}_amd64.sig msodbcsql17_${MSSQL_VERSION}_amd64.apk && \
+    gpg --verify mssql-tools_${MSSQL_VERSION}_amd64.sig mssql-tools_${MSSQL_VERSION}_amd64.apk && \
+    # Installing packages
+    echo y | apk add --allow-untrusted msodbcsql17_${MSSQL_VERSION}_amd64.apk mssql-tools_${MSSQL_VERSION}_amd64.apk && \
+    # Deleting packages
+    apk del .build-dependencies && rm -f ms*.sig ms*.apk && \
+	# Create symbolic links
+	ln -s /opt/mssql-tools/bin/bcp /usr/local/bin/bcp && \
+	ln -s /opt/mssql-tools/bin/sqlcmd /usr/local/bin/sqlcmd
+
 COPY --from=alpine-base /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /build/kubot /opt/kubot/
 COPY --from=build /usr/local/bin/helm /usr/local/bin

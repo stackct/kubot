@@ -13,6 +13,14 @@ Kubot's configurable command system allows commands to be declared via configura
 
 Example:
 ```
+environments:
+  - name: local
+    channel: env_local
+    users:
+      - foo@bar.com
+    variables:
+      - foo: "bar"
+
 commandConfig:
   dir: /tmp
 
@@ -31,7 +39,7 @@ Kubot configuration is managed through a configuration file located at `KUBOT_CO
 Kubot can be configured to listen for slack commands on a local port for easier developer testing.
 
 ```
-kubot -p 8080
+go build && ./kubot -p 8080
 curl -X POST --data ".deploy foo 1.0.0" http://localhost:8080
 ```
 

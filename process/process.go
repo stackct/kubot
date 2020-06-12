@@ -2,6 +2,7 @@ package process
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime/debug"
 	"strings"
@@ -9,10 +10,15 @@ import (
 	"github.com/apex/log"
 )
 
-func Start(name string, args []string, replacementArgs map[string]string) error {
+func Start(name string, args []string, replacementArgs map[string]string, environmentVariables map[string]string) error {
 	resolvedArgs := Interpolate(args, replacementArgs)
 	log.WithField("name", name).WithField("args", resolvedArgs).Info("executing command")
-	out, err := exec.Command(name, resolvedArgs...).Output()
+	cmd := exec.Command(name, resolvedArgs...)
+	cmd.Env = os.Environ()
+	for k, v := range environmentVariables {
+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
+	}
+	out, err := cmd.Output()
 
 	logEntry := log.WithField("name", name).WithField("args", resolvedArgs).WithField("stdout", string(out))
 	if nil != err {

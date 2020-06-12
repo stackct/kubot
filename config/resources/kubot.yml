@@ -2,6 +2,9 @@ environments:
   - name: e1
     channel: ch1
     users: []
+    variables:
+      foo1: "bar"
+      foo2: "baz"
   - name: e2
     channel: ch2
     users:

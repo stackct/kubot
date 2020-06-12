@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/apex/log"
 	"kubot/api"
 	"kubot/config"
 	"kubot/process"
@@ -9,6 +8,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/apex/log"
 
 	"github.com/spf13/cobra"
 )
@@ -43,7 +44,7 @@ func run() {
 			WithField("args", init.Args).
 			Info("executing init command")
 
-		if err := process.Start(init.Name, init.Args, config.Conf.GetCommandConfig()); err != nil {
+		if err := process.Start(init.Name, init.Args, config.Conf.GetCommandConfig(), map[string]string{}); err != nil {
 			log.
 				WithField("command", init.Name).
 				WithField("args", init.Args).

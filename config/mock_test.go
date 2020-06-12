@@ -35,18 +35,19 @@ func TestMockConfig_WithOptions(t *testing.T) {
 func TestMockConfig_GetCommand(t *testing.T) {
 	testCases := []struct {
 		name    string
+		product string
 		error   error
 		command *Command
 	}{
-		{"fail", nil, &Command{Name: "fail", Commands: []Command{{Name: "ls", Args: []string{"foo"}}}}},
-		{"echo", nil, &Command{Name: "echo", Commands: []Command{{Name: "echo", Args: []string{"foo", "${foo1}", "${foo2}", "${foo3}"}}}, Config: map[string]string{"foo2": "bar2"}}},
-		{"other", nil, &Command{}},
+		{"fail", "product", nil, &Command{Name: "fail", Commands: []Command{{Name: "ls", Args: []string{"foo"}}}}},
+		{"echo", "product", nil, &Command{Name: "echo", Commands: []Command{{Name: "echo", Args: []string{"foo", "${foo1}", "${foo2}", "${foo3}"}}}, Config: map[string]string{"foo2": "bar2"}}},
+		{"other", "product", nil, &Command{}},
 	}
 
 	c := NewMockConfig()
 
 	for _, tc := range testCases {
-		cmd, err := c.GetCommand(tc.name)
+		cmd, err := c.GetCommand(tc.name, tc.product)
 		assert.Equal(t, tc.error, err)
 		assert.Equal(t, tc.command, cmd)
 	}

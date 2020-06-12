@@ -48,7 +48,7 @@ func (c *MockConfig) GetCommands() []string {
 	return []string{"cmd"}
 }
 
-func (c *MockConfig) GetCommand(name string) (*Command, error) {
+func (c *MockConfig) GetCommand(name string, product string) (*Command, error) {
 	if "fail" == name {
 		return &Command{
 			Name:     name,

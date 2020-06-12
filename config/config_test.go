@@ -15,8 +15,8 @@ var mockConfig Config
 func init() {
 	mockConfig = Config{
 		Environments: []Environment{
-			Environment{Name: "e1", Users: []string{}, Channel: "ch1"},
-			Environment{Name: "e2", Users: []string{"john.doe", "mary.foo"}, Channel: "ch2"},
+			{Name: "e1", Users: []string{}, Channel: "ch1", Variables: map[string]string{"foo1": "bar", "foo2": "baz"}},
+			{Name: "e2", Users: []string{"john.doe", "mary.foo"}, Channel: "ch2"},
 		},
 		SlackToken: "some-token",
 		Logging: Logging{
@@ -30,10 +30,10 @@ func init() {
 			"chartFile":            "chart",
 		},
 		Commands: []Command{
-			Command{
+			{
 				Name: "deploy",
 				Commands: []Command{
-					Command{
+					{
 						Name: "echo",
 						Args: []string{"deploy", "${productRepo}/${product}", "--version", "${version}", "--timeout", "${deployTimeoutSeconds}", "-f", "${chartFile}"},
 					},
@@ -41,7 +41,7 @@ func init() {
 			},
 		},
 		Init: []Command{
-			Command{Name: "echo", Args: []string{"initialized"}},
+			{Name: "echo", Args: []string{"initialized"}},
 		},
 	}
 }
@@ -137,8 +137,8 @@ func TestConfig_GetLogging(t *testing.T) {
 func TestConfig_HasAccess(t *testing.T) {
 	c := Config{
 		Environments: []Environment{
-			Environment{Name: "e1", Users: []string{"u1"}},
-			Environment{Name: "e2", Users: []string{"u2"}},
+			{Name: "e1", Users: []string{"u1"}},
+			{Name: "e2", Users: []string{"u2"}},
 		},
 	}
 
@@ -151,8 +151,8 @@ func TestConfig_HasAccess(t *testing.T) {
 func TestConfig_GetCommands(t *testing.T) {
 	c := Config{
 		Commands: []Command{
-			Command{Name: "cmd1"},
-			Command{Name: "cmd2"},
+			{Name: "cmd1"},
+			{Name: "cmd2"},
 		},
 	}
 
@@ -174,23 +174,26 @@ func TestConfig_GetCommandConfig_Is_Thread_Safe(t *testing.T) {
 func TestConfig_GetCommand(t *testing.T) {
 	c := Config{
 		Commands: []Command{
-			Command{Name: "cmd1"},
-			Command{Name: "cmd2"},
+			{Name: "cmd1"},
+			{Name: "cmd2"},
+			{Name: "cmd2", Product: "override"},
 		},
 	}
 
 	testCases := []struct {
-		name string
-		cmd  *Command
-		err  error
+		name    string
+		product string
+		cmd     *Command
+		err     error
 	}{
-		{"cmd1", &Command{Name: "cmd1"}, nil},
-		{"cmd2", &Command{Name: "cmd2"}, nil},
-		{"nil", nil, errors.New("command not found: nil")},
+		{"cmd1", "product1", &Command{Name: "cmd1"}, nil},
+		{"cmd2", "product2", &Command{Name: "cmd2"}, nil},
+		{"cmd2", "override", &Command{Name: "cmd2", Product: "override"}, nil},
+		{"nil", "nil", nil, errors.New("command not found: nil")},
 	}
 
 	for _, tc := range testCases {
-		cmd, err := c.GetCommand(tc.name)
+		cmd, err := c.GetCommand(tc.name, tc.product)
 
 		assert.Equal(t, tc.cmd, cmd)
 		assert.Equal(t, tc.err, err)
@@ -202,6 +205,6 @@ func TestConfig_GetCommandPrefix(t *testing.T) {
 }
 
 func TestConfig_GetInit(t *testing.T) {
-	init := []Command{Command{Name: "cmd1"}}
+	init := []Command{{Name: "cmd1"}}
 	assert.Equal(t, init, Config{Init: init}.GetInit())
 }

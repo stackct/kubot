@@ -3,11 +3,12 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/apex/log"
 	"io/ioutil"
 	"kubot/command"
 	"kubot/config"
 	"net/http"
+
+	"github.com/apex/log"
 
 	"github.com/gorilla/mux"
 )
@@ -31,8 +32,15 @@ func Execute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	env, err := config.Conf.GetEnvironmentByChannel("api")
+	if err != nil {
+		log.WithField("reason", err.Error()).Error("Failed to parse environment config")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	out := make(chan string)
-	go cmd.Execute(out, command.Context{Environment: config.Environment{Name: "localhost"}})
+	go cmd.Execute(out, command.Context{Environment: *env})
 	var messages []string
 	for msg := range out {
 		log.Info(msg)

@@ -45,7 +45,7 @@ type Configurator interface {
 	GetEnvironmentByChannel(ch string) (*Environment, error)
 	GetSlackToken() string
 	GetLogging() Logging
-	GetCommand(name string) (*Command, error)
+	GetCommand(name string, product string) (*Command, error)
 	GetCommands() []string
 	GetCommandConfig() map[string]string
 	GetCommandPrefix() string
@@ -54,6 +54,7 @@ type Configurator interface {
 
 type Command struct {
 	Name     string            `yaml:"name"`
+	Product  string            `yaml:"product"`
 	Commands []Command         `yaml:"commands"`
 	Args     []string          `yaml:"args"`
 	Config   map[string]string `yaml:"config"`
@@ -146,7 +147,12 @@ func (c Config) GetCommandConfig() map[string]string {
 	return config
 }
 
-func (c Config) GetCommand(name string) (*Command, error) {
+func (c Config) GetCommand(name string, product string) (*Command, error) {
+	for _, cmd := range c.Commands {
+		if cmd.Name == name && cmd.Product == product {
+			return &cmd, nil
+		}
+	}
 	for _, cmd := range c.Commands {
 		if cmd.Name == name {
 			return &cmd, nil

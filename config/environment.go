@@ -1,9 +1,10 @@
 package config
 
 type Environment struct {
-	Name    string   `yaml:"name"`
-	Users   []string `yaml:"users"`
-	Channel string   `yaml:"channel"`
+	Name      string            `yaml:"name"`
+	Users     []string          `yaml:"users"`
+	Channel   string            `yaml:"channel"`
+	Variables map[string]string `yaml:"variables"`
 }
 
 func (e Environment) ContainsUser(u string) bool {

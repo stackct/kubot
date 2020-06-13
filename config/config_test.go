@@ -171,33 +171,43 @@ func TestConfig_GetCommandConfig_Is_Thread_Safe(t *testing.T) {
 	assert.Equal(t, "bar", commandConfig["foo"])
 }
 
-func TestConfig_GetCommand(t *testing.T) {
-	c := Config{
+func TestConfig_GetCommand_FromNameAndProduct(t *testing.T) {
+	config := Config{
 		Commands: []Command{
-			{Name: "cmd1"},
+			{Name: "cmd"},
+			{Name: "cmd", Product: "foo"},
 			{Name: "cmd2"},
-			{Name: "cmd2", Product: "override"},
 		},
 	}
+	cmd, err := config.GetCommand("cmd", "foo")
+	assert.Equal(t, err, nil)
+	assert.Equal(t, cmd.Name, "cmd")
+	assert.Equal(t, cmd.Product, "foo")
+}
 
-	testCases := []struct {
-		name    string
-		product string
-		cmd     *Command
-		err     error
-	}{
-		{"cmd1", "product1", &Command{Name: "cmd1"}, nil},
-		{"cmd2", "product2", &Command{Name: "cmd2"}, nil},
-		{"cmd2", "override", &Command{Name: "cmd2", Product: "override"}, nil},
-		{"nil", "nil", nil, errors.New("command not found: nil")},
+func TestConfig_GetCommand_DefaultProduct(t *testing.T) {
+	config := Config{
+		Commands: []Command{
+			{Name: "cmd", Product: "foo"},
+			{Name: "cmd"},
+			{Name: "cmd2"},
+		},
 	}
+	cmd, err := config.GetCommand("cmd", "default")
+	assert.Equal(t, err, nil)
+	assert.Equal(t, cmd.Name, "cmd")
+	assert.Equal(t, cmd.Product, "")
+}
 
-	for _, tc := range testCases {
-		cmd, err := c.GetCommand(tc.name, tc.product)
-
-		assert.Equal(t, tc.cmd, cmd)
-		assert.Equal(t, tc.err, err)
+func TestConfig_GetCommand_NotFound(t *testing.T) {
+	config := Config{
+		Commands: []Command{
+			{Name: "cmd"},
+			{Name: "cmd2"},
+		},
 	}
+	_, err := config.GetCommand("cmd3", "")
+	assert.Equal(t, err, errors.New("command not found: cmd3"))
 }
 
 func TestConfig_GetCommandPrefix(t *testing.T) {

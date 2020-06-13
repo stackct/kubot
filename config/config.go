@@ -154,7 +154,7 @@ func (c Config) GetCommand(name string, product string) (*Command, error) {
 		}
 	}
 	for _, cmd := range c.Commands {
-		if cmd.Name == name {
+		if cmd.Name == name && cmd.Product == "" {
 			return &cmd, nil
 		}
 	}

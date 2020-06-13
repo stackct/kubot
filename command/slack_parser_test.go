@@ -1,8 +1,9 @@
 package command
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func init() {
@@ -29,6 +30,16 @@ func TestParseCommand(t *testing.T) {
 			message:  "!deploy",
 			expected: &Deploy{},
 			err:      &CommandArgumentError{"usage: deploy <product> <version> [release]"},
+		},
+		{
+			message:  "!bounce",
+			expected: &Bounce{},
+			err:      nil,
+		},
+		{
+			message:  "!kick",
+			expected: &Kick{},
+			err:      &CommandArgumentError{"usage: kick <product>"},
 		},
 		{
 			message:  "!unknown",

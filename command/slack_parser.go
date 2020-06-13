@@ -43,6 +43,10 @@ func (foo SlackCommandParser) Parse(c string) (Command, error) {
 		return NewHelp()
 	case "deploy":
 		return NewDeploy(args)
+	case "bounce":
+		return NewBounce(args)
+	case "kick":
+		return NewKick(args)
 	}
 
 	return nil, &UnknownCommandError{"unknown command"}

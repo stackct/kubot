@@ -27,7 +27,7 @@ func (k Kick) Execute(out chan string, context Context) {
 
 	out <- fmt.Sprintf("Kicking *%s* in *%s* environment...", k.product, context.Environment.Name)
 
-	if err := Execute("kick", k.product, map[string]string{"product": k.product, "environment": context.Environment.Name}, context.Environment.Variables); err != nil {
+	if err := Execute("kick", k.product, map[string]string{"product": k.product, "environment": context.Environment.Name}, context.Environment.Variables, out); err != nil {
 		log.Error(err.Error())
 		out <- fmt.Sprintf("*%s* kick failed", k.product)
 		return

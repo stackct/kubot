@@ -10,7 +10,7 @@ import (
 	"github.com/apex/log"
 )
 
-func Start(name string, args []string, replacementArgs map[string]string, environmentVariables map[string]string) error {
+func Start(name string, args []string, replacementArgs map[string]string, environmentVariables map[string]string) ([]byte, error) {
 	resolvedArgs := Interpolate(args, replacementArgs)
 	log.WithField("name", name).WithField("args", resolvedArgs).Info("executing command")
 	cmd := exec.Command(name, resolvedArgs...)
@@ -26,7 +26,7 @@ func Start(name string, args []string, replacementArgs map[string]string, enviro
 	} else {
 		logEntry.Info("command completed")
 	}
-	return err
+	return out, err
 }
 
 func Interpolate(args []string, replacementArgs map[string]string) []string {

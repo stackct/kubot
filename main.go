@@ -44,7 +44,7 @@ func run() {
 			WithField("args", init.Args).
 			Info("executing init command")
 
-		if err := process.Start(init.Name, init.Args, config.Conf.GetCommandConfig(), map[string]string{}); err != nil {
+		if _, err := process.Start(init.Name, init.Args, config.Conf.GetCommandConfig(), map[string]string{}); err != nil {
 			log.
 				WithField("command", init.Name).
 				WithField("args", init.Args).

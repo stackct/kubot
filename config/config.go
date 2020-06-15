@@ -53,11 +53,12 @@ type Configurator interface {
 }
 
 type Command struct {
-	Name     string            `yaml:"name"`
-	Product  string            `yaml:"product"`
-	Commands []Command         `yaml:"commands"`
-	Args     []string          `yaml:"args"`
-	Config   map[string]string `yaml:"config"`
+	Name          string            `yaml:"name"`
+	Product       string            `yaml:"product"`
+	ChannelStdout bool              `yaml:"channelStdout"`
+	Commands      []Command         `yaml:"commands"`
+	Args          []string          `yaml:"args"`
+	Config        map[string]string `yaml:"config"`
 }
 
 type Logging struct {

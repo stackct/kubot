@@ -1,6 +1,7 @@
 package command
 
 import (
+	"fmt"
 	"kubot/config"
 	"kubot/process"
 )
@@ -9,7 +10,7 @@ type Command interface {
 	Execute(output chan string, context Context)
 }
 
-func Execute(name string, product string, configOverrides map[string]string, environmentVariables map[string]string) error {
+func Execute(name string, product string, configOverrides map[string]string, environmentVariables map[string]string, out chan string) error {
 	command, err := config.Conf.GetCommand(name, product)
 	if err != nil {
 		return err
@@ -24,7 +25,11 @@ func Execute(name string, product string, configOverrides map[string]string, env
 	}
 
 	for i := 0; i < len(command.Commands); i++ {
-		if err := process.Start(command.Commands[i].Name, command.Commands[i].Args, commandConfig, environmentVariables); err != nil {
+		stdout, err := process.Start(command.Commands[i].Name, command.Commands[i].Args, commandConfig, environmentVariables)
+		if command.ChannelStdout {
+			out <- fmt.Sprintf("```%s```", string(stdout))
+		}
+		if err != nil {
 			return err
 		}
 	}

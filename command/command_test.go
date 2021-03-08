@@ -11,7 +11,7 @@ func TestExecute_Failure_When_Command_Fails(t *testing.T) {
 	config.Conf = config.NewMockConfig()
 	out := make(chan string)
 	err := Execute("fail", "product", map[string]string{}, map[string]string{}, out)
-	assert.Equal(t, "exit status 2", err.Error())
+	assert.NotNil(t, err)
 }
 
 func TestExecute_Success(t *testing.T) {

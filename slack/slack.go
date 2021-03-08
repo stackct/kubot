@@ -3,6 +3,7 @@ package slack
 import (
 	"errors"
 	"fmt"
+
 	"github.com/apex/log"
 
 	"kubot/command"
@@ -31,7 +32,7 @@ func Start() {
 	go rtm.ManageConnection()
 
 	users, _ = rtm.GetUsers()
-	channels, _ = rtm.GetChannels(true)
+	channels, _, _ = rtm.GetConversations(&slack.GetConversationsParameters{Limit: 1000, Types: []string{"public_channel"}})
 
 	for e := range rtm.IncomingEvents {
 		go handleEvent(e)
@@ -56,6 +57,8 @@ func handleEvent(e slack.RTMEvent) {
 				return
 			}
 		}
+
+		log.WithField("channel", ev.Channel).Info("Looking up channel")
 
 		env, err := config.Conf.GetEnvironmentByChannel(GetChannel((ev.Channel)).Name)
 		if err != nil {

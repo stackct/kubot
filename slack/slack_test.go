@@ -3,6 +3,7 @@ package slack
 import (
 	"kubot/command"
 	"kubot/config"
+	"net/http"
 	"testing"
 
 	"github.com/nlopes/slack"
@@ -20,7 +21,7 @@ func BeforeEach(t *testing.T) func() {
 	config.Conf = config.NewMockConfig()
 
 	users = []slack.User{
-		slack.User{ID: "_user", Profile: slack.UserProfile{Email: "foo@invalid.co"}},
+		{ID: "_user", Profile: slack.UserProfile{Email: "foo@invalid.co"}},
 	}
 	startOptions = append(startOptions, slack.OptionAPIURL(server.httpURL()))
 	rtm = slack.New("", startOptions...).NewRTM()
@@ -93,10 +94,25 @@ func TestStart_No_Access(t *testing.T) {
 	}
 }
 
+func TestStart_Loads_Channels(t *testing.T) {
+	defer BeforeEach(t)()
+
+	parser = command.NewMockParser()
+
+	http.HandleFunc("/conversations.list", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`{ "ok": true, "channels": [ { "id": "123FOO", "name": "foo" } ] }`))
+	})
+
+	runTest(t, "!any", "fin")
+
+	assert.Equal(t, 1, len(channels))
+	assert.Equal(t, "foo", channels[0].Name)
+}
+
 func TestGetUser(t *testing.T) {
 	users = []slack.User{
-		slack.User{ID: "u1", Name: "user1"},
-		slack.User{ID: "u2", Name: "user2"},
+		{ID: "u1", Name: "user1"},
+		{ID: "u2", Name: "user2"},
 	}
 
 	testCases := []struct {

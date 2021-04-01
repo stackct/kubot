@@ -32,7 +32,7 @@ func Start() {
 	go rtm.ManageConnection()
 
 	users, _ = rtm.GetUsers()
-	channels, _, _ = rtm.GetConversations(&slack.GetConversationsParameters{Limit: 1000, Types: []string{"public_channel"}})
+	channels, _, _ = rtm.GetConversations(&slack.GetConversationsParameters{Limit: 1000, Types: []string{"private_channel"}})
 
 	for e := range rtm.IncomingEvents {
 		go handleEvent(e)

@@ -47,6 +47,8 @@ func (foo SlackCommandParser) Parse(c string) (Command, error) {
 		return NewBounce(args)
 	case "kick":
 		return NewKick(args)
+	case "version":
+		return NewVersion(args)
 	}
 
 	return nil, &UnknownCommandError{"unknown command"}

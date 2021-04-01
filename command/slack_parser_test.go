@@ -42,6 +42,11 @@ func TestParseCommand(t *testing.T) {
 			err:      &CommandArgumentError{"usage: kick <product>"},
 		},
 		{
+			message:  "!version",
+			expected: &Version{},
+			err:      &CommandArgumentError{"usage: version <product>"},
+		},
+		{
 			message:  "!unknown",
 			expected: nil,
 			err:      &UnknownCommandError{"unknown command"},

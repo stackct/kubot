@@ -18,9 +18,9 @@ func Start(name string, args []string, replacementArgs map[string]string, enviro
 	for k, v := range environmentVariables {
 		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
 	}
-	out, err := cmd.Output()
+	out, err := cmd.CombinedOutput()
 
-	logEntry := log.WithField("name", name).WithField("args", resolvedArgs).WithField("stdout", string(out))
+	logEntry := log.WithField("name", name).WithField("args", resolvedArgs).WithField("output", string(out))
 	if nil != err {
 		logEntry.WithError(err).WithField("stackTrace", string(debug.Stack())).Error("command failed")
 	} else {

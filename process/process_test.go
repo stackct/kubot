@@ -23,7 +23,7 @@ func TestRunProcessWithoutInterpolation(t *testing.T) {
 	e = h.Entries[1]
 	assert.Equal(t, e.Message, "command completed")
 	assert.Equal(t, e.Level, log.InfoLevel)
-	assert.Equal(t, log.Fields{"args": []string{"foo"}, "name": "echo", "stdout": "foo\n"}, e.Fields)
+	assert.Equal(t, log.Fields{"args": []string{"foo"}, "name": "echo", "output": "foo\n"}, e.Fields)
 }
 
 func TestRunProcessWithInterpolation(t *testing.T) {
@@ -41,7 +41,7 @@ func TestRunProcessWithInterpolation(t *testing.T) {
 	e = h.Entries[1]
 	assert.Equal(t, e.Message, "command completed")
 	assert.Equal(t, e.Level, log.InfoLevel)
-	assert.Equal(t, log.Fields{"args": []string{"bar"}, "name": "echo", "stdout": "bar\n"}, e.Fields)
+	assert.Equal(t, log.Fields{"args": []string{"bar"}, "name": "echo", "output": "bar\n"}, e.Fields)
 }
 
 func TestRunProcessWithFailure(t *testing.T) {
@@ -59,4 +59,20 @@ func TestRunProcessWithFailure(t *testing.T) {
 	e = h.Entries[1]
 	assert.Equal(t, e.Message, "command failed")
 	assert.Equal(t, e.Level, log.ErrorLevel)
+}
+
+func TestRunProcessCapturesStdOutAndStdErr(t *testing.T) {
+	h := memory.New()
+	log.SetHandler(h)
+
+	Start("sh", []string{"-c", "echo stdout; echo 1>&2 stderr"}, map[string]string{}, map[string]string{})
+
+	assert.Equal(t, 2, len(h.Entries))
+	e := h.Entries[0]
+	assert.Equal(t, e.Message, "executing command")
+	assert.Equal(t, e.Level, log.InfoLevel)
+
+	e = h.Entries[1]
+	assert.Equal(t, e.Message, "command completed")
+	assert.Equal(t, e.Fields["output"], "stdout\nstderr\n")
 }

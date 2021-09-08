@@ -10,6 +10,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Version
+        run: |
+          mkdir -p gen && git rev-parse --short HEAD > gen/VERSION
       - name: Docker Login
         uses: azure/docker-login@v1
         with:

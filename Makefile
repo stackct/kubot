@@ -1,4 +1,4 @@
-PROJECT_BUILD_VERSION:=$(shell git rev-parse --short HEAD)
+PROJECT_BUILD_VERSION:=$(shell cat gen/VERSION | tr -d '\n')$(shell git rev-parse --short HEAD)
 PROJECT_BUILD_DATE="$(shell date -u +%FT%T.000Z)"
 LDFLAGS=-ldflags=all="-X 'main.version=$(PROJECT_BUILD_VERSION)' -X 'main.buildDate=$(PROJECT_BUILD_DATE)'"
 

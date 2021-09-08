@@ -5,7 +5,7 @@ ARG HELM_VERSION=3.6.3
 WORKDIR /build
 COPY . /build
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o kubot .
+RUN make
 
 RUN curl https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz --output /tmp/helm.tar.gz \
 	&& tar -zxvf /tmp/helm.tar.gz -C /tmp \

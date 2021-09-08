@@ -14,9 +14,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var rootCmd *cobra.Command
-var apiPort string
-var logFile *os.File
+var (
+	version   string
+	buildDate string
+	rootCmd   *cobra.Command
+	apiPort   string
+	logFile   *os.File
+)
 
 func init() {
 	rootCmd = &cobra.Command{
@@ -56,6 +60,7 @@ func run() {
 	go api.Start(apiPort)
 	go slack.Start()
 
-	<-stop
+	log.WithField("version", version).WithField("buildDate", buildDate).Info("Application Started")
 
+	<-stop
 }

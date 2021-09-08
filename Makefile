@@ -1,6 +1,4 @@
-PROJECT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-PROJECT_COMMIT:=$(shell git -C $(PROJECT_DIR) rev-parse --short HEAD)
-PROJECT_BUILD_VERSION:=$(PROJECT_COMMIT)
+PROJECT_BUILD_VERSION:=$(shell git rev-parse --short HEAD)
 PROJECT_BUILD_DATE="$(shell date -u +%FT%T.000Z)"
 LDFLAGS=-ldflags=all="-X 'main.version=$(PROJECT_BUILD_VERSION)' -X 'main.buildDate=$(PROJECT_BUILD_DATE)'"
 
@@ -24,8 +22,7 @@ install: dep
 	@go build -a -o $(GOHOME)/bin/$(BINARY) $(LDFLAGS)
 
 clean:
-	@find $(PROJECT_DIR) -name '$(BINARY)[-?][a-zA-Z0-9]*[-?][a-zA-Z0-9]*' -delete
-	@rm -fr $(OUTPUT_DIR)
+	@rm $(BINARY)
 
 test: dep-test
 	@go test -v -coverprofile=coverage.txt -covermode=atomic ./...

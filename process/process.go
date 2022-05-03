@@ -11,7 +11,8 @@ import (
 )
 
 func Start(name string, args []string, replacementArgs map[string]string, environmentVariables map[string]string) ([]byte, error) {
-	resolvedArgs := Interpolate(args, replacementArgs)
+	resolvedArgs := Interpolate(args, environmentVariables)
+	resolvedArgs = Interpolate(resolvedArgs, replacementArgs)
 	log.WithField("name", name).WithField("args", resolvedArgs).Info("executing command")
 	cmd := exec.Command(name, resolvedArgs...)
 	cmd.Env = os.Environ()

@@ -44,6 +44,24 @@ func TestRunProcessWithInterpolation(t *testing.T) {
 	assert.Equal(t, log.Fields{"args": []string{"bar"}, "name": "echo", "output": "bar\n"}, e.Fields)
 }
 
+func TestRunProcessWithEnvironmentVariableInterpolation(t *testing.T) {
+	h := memory.New()
+	log.SetHandler(h)
+
+	Start("echo", []string{"${foo}"}, map[string]string{}, map[string]string{"foo": "bar"})
+
+	assert.Equal(t, 2, len(h.Entries))
+	e := h.Entries[0]
+	assert.Equal(t, e.Message, "executing command")
+	assert.Equal(t, e.Level, log.InfoLevel)
+	assert.Equal(t, log.Fields{"name": "echo", "args": []string{"bar"}}, e.Fields)
+
+	e = h.Entries[1]
+	assert.Equal(t, e.Message, "command completed")
+	assert.Equal(t, e.Level, log.InfoLevel)
+	assert.Equal(t, log.Fields{"args": []string{"bar"}, "name": "echo", "output": "bar\n"}, e.Fields)
+}
+
 func TestRunProcessWithFailure(t *testing.T) {
 	h := memory.New()
 	log.SetHandler(h)

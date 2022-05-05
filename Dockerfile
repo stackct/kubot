@@ -31,6 +31,12 @@ ENV KUBOT_CONFIG=/conf/kubot.yml
 
 RUN apk --update --no-cache add bash curl git jq
 
+# Required for az cli
+RUN apk add --virtual=build make gcc libffi-dev musl-dev python3-dev \
+ && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+ && python3 get-pip.py \
+ && pip3 install azure-cli
+
 RUN apk add --no-cache gnupg --virtual .build-dependencies -- && \
     # Download mssql-tools and msodbcsql
     curl -O https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_${MSSQL_VERSION}_amd64.apk && \

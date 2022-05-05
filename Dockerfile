@@ -32,7 +32,7 @@ ENV KUBOT_CONFIG=/conf/kubot.yml
 RUN apk --update --no-cache add bash curl git jq
 
 # Required for az cli
-RUN apk add --virtual=build make gcc libffi-dev musl-dev python3-dev \
+RUN apk add --virtual=build make gcc gnupg libffi-dev musl-dev python3-dev \
  && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
  && python3 get-pip.py \
  && pip3 install azure-cli

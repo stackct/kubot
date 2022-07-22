@@ -1,7 +1,7 @@
 # Build image container
 FROM golang:1.13.4 AS build
 ARG K8S_VERSION=v1.20.9
-ARG HELM_VERSION=3.6.3
+ARG HELM_VERSION=3.9.1
 ARG ORAS_VERSION=0.13.0
 WORKDIR /build
 COPY . /build

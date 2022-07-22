@@ -2,6 +2,7 @@
 FROM golang:1.13.4 AS build
 ARG K8S_VERSION=v1.20.9
 ARG HELM_VERSION=3.6.3
+ARG ORAS_VERSION=0.13.0
 WORKDIR /build
 COPY . /build
 
@@ -17,6 +18,11 @@ RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${K8S_VER
 	&& chmod +x ./kubectl \
 	&& mv ./kubectl /usr/local/bin/kubectl
 
+RUN mkdir /tmp/oras \
+    && curl -L https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_amd64.tar.gz -o /tmp/oras/oras.tar.gz \
+    && tar -zxvf /tmp/oras/oras.tar.gz -C /tmp/oras \
+    && mv /tmp/oras/oras /usr/local/bin/oras \
+    && rm -rf /tmp/oras
 
 # CA Certificates
 FROM alpine:latest AS alpine-base

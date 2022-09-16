@@ -35,7 +35,7 @@ ARG MSSQL_VERSION=17.5.2.1-1
 
 ENV KUBOT_CONFIG=/conf/kubot.yml
 
-RUN apk --update --no-cache add bash curl github-cli jq
+RUN apk --update --no-cache add bash curl git jq openssh
 
 # Required for az cli
 RUN apk add --virtual=build make gcc gnupg libffi-dev musl-dev python3-dev \

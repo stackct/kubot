@@ -68,6 +68,4 @@ COPY --from=build /usr/local/bin/helm /usr/local/bin
 COPY --from=build /usr/local/bin/kubectl /usr/local/bin
 COPY --from=build /usr/local/bin/oras /usr/local/bin
 
-VOLUME ["/opt/kubot/log"]
-
 ENTRYPOINT [ "/opt/kubot/kubot" ]

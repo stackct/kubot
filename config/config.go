@@ -116,6 +116,10 @@ func (c Config) GetEnvironmentByChannel(ch string) (*Environment, error) {
 }
 
 func (c Config) GetSlackToken() string {
+	slackToken := os.Getenv("SLACK_TOKEN")
+	if "" != slackToken {
+		return slackToken
+	}
 	return c.SlackToken
 }
 

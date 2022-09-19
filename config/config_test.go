@@ -128,6 +128,11 @@ func TestConfig_GetSlackToken(t *testing.T) {
 	assert.Equal(t, "abcde", Config{SlackToken: "abcde"}.GetSlackToken())
 }
 
+func TestConfig_GetSlackTokenFromEnvironment(t *testing.T) {
+	os.Setenv("SLACK_TOKEN", "abcde")
+	assert.Equal(t, "abcde", Config{}.GetSlackToken())
+}
+
 func TestConfig_GetLogging(t *testing.T) {
 	logging := Logging{}
 	c := Config{Logging: logging}

@@ -34,6 +34,10 @@ func Start() {
 	users, _ = rtm.GetUsers()
 	channels, _, _ = rtm.GetConversations(&slack.GetConversationsParameters{Limit: 1000, Types: []string{"private_channel"}})
 
+	for _, channel := range channels {
+		rtm.SendMessage(rtm.NewOutgoingMessage("Ready", channel.ID))
+	}
+
 	for e := range rtm.IncomingEvents {
 		go handleEvent(e)
 	}

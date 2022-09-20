@@ -103,7 +103,14 @@ func TestStart_Loads_Channels(t *testing.T) {
 		w.Write([]byte(`{ "ok": true, "channels": [ { "id": "123FOO", "name": "foo" } ] }`))
 	})
 
-	runTest(t, "!any", "fin")
+	runTest(t, "!any", "Ready")
+
+	rsp, err := server.waitForRequest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	msg := getOutgoingMessage(rsp)
+	assert.Equal(t, "fin", msg.Text)
 
 	assert.Equal(t, 1, len(channels))
 	assert.Equal(t, "foo", channels[0].Name)
@@ -161,8 +168,6 @@ func runTest(t *testing.T, incomingText string, outgoingText string) {
 		t.Fatal(err)
 	}
 	msg := getOutgoingMessage(rsp)
-
-	// t.Fatalf("outgoing msg: %v\n", msg.Text)
 
 	assert.Equal(t, outgoingText, msg.Text)
 }

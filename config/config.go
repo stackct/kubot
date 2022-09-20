@@ -139,9 +139,20 @@ func (c Config) HasAccess(user string, env string) bool {
 func (c Config) GetCommands() []string {
 	commands := []string{}
 	for _, cmd := range c.Commands {
-		commands = append(commands, cmd.Name)
+		if !contains(commands, cmd.Name) {
+			commands = append(commands, cmd.Name)
+		}
 	}
 	return commands
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }
 
 func (c Config) GetCommandConfig() map[string]string {

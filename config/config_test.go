@@ -158,6 +158,7 @@ func TestConfig_GetCommands(t *testing.T) {
 		Commands: []Command{
 			{Name: "cmd1"},
 			{Name: "cmd2"},
+			{Name: "cmd2"},
 		},
 	}
 

@@ -26,7 +26,7 @@ func Execute(name string, product string, configOverrides map[string]string, env
 
 	for i := 0; i < len(command.Commands); i++ {
 		stdout, err := process.Start(command.Commands[i].Name, command.Commands[i].Args, commandConfig, environmentVariables)
-		if command.ChannelStdout {
+		if command.ChannelStdout && len(string(stdout)) > 0 {
 			out <- fmt.Sprintf("```%s```", string(stdout))
 		}
 		if err != nil {

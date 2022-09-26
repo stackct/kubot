@@ -55,6 +55,14 @@ func (c *MockConfig) GetCommand(name string, product string) (*Command, error) {
 			Commands: []Command{{Name: "ls", Args: []string{"foo"}}},
 		}, nil
 	}
+	if "echo" == name && "stdout" == product {
+		return &Command{
+			Name:          name,
+			Commands:      []Command{{Name: name, Args: []string{"foo"}}},
+			Config:        map[string]string{},
+			ChannelStdout: true,
+		}, nil
+	}
 	if "echo" == name {
 		return &Command{
 			Name:     name,

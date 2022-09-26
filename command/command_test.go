@@ -27,3 +27,10 @@ func TestExecute_Interpolates_From_Command_Config(t *testing.T) {
 	err := Execute("echo", "product", map[string]string{"foo3": "bar3"}, map[string]string{}, out)
 	assert.Nil(t, err)
 }
+
+func TestExecute_With_ChannelStdout(t *testing.T) {
+	config.Conf = config.NewMockConfig()
+	out := make(chan string)
+	go Execute("echo", "stdout", map[string]string{}, map[string]string{}, out)
+	assert.Equal(t, "```foo\n```", <-out)
+}

@@ -4,6 +4,8 @@ import (
 	"kubot/config"
 	"testing"
 
+	"github.com/apex/log"
+	"github.com/apex/log/handlers/memory"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,6 +31,9 @@ func TestNewDeploy(t *testing.T) {
 }
 
 func TestDeploy_Execute(t *testing.T) {
+	h := memory.New()
+	log.SetHandler(h)
+
 	out := make(chan string)
 	config.Conf = config.NewMockConfig()
 
@@ -36,4 +41,10 @@ func TestDeploy_Execute(t *testing.T) {
 
 	assert.Equal(t, "Deploying *Foo-1.0.0* to *local* environment...", <-out)
 	assert.Equal(t, "*Foo-1.0.0* was successfully deployed.", <-out)
+
+	assert.Equal(t, 1, len(h.Entries))
+	e := h.Entries[0]
+	assert.Equal(t, e.Message, "deployed successfully")
+	assert.Equal(t, e.Level, log.InfoLevel)
+	assert.Equal(t, log.Fields{"product": "Foo", "version": "1.0.0", "environment": "local"}, e.Fields)
 }

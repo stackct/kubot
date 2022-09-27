@@ -40,5 +40,6 @@ func (d Deploy) Execute(out chan string, context Context) {
 		out <- fmt.Sprintf("*%s* deployment failed", d.product)
 		return
 	}
+	log.WithField("product", d.product).WithField("version", d.version).WithField("environment", context.Environment.Name).Info("deployed successfully")
 	out <- fmt.Sprintf("*%s-%s* was successfully deployed.", d.product, d.version)
 }

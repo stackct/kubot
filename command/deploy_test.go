@@ -37,7 +37,7 @@ func TestDeploy_Execute(t *testing.T) {
 	out := make(chan string)
 	config.Conf = config.NewMockConfig()
 
-	go Deploy{product: "Foo", version: "1.0.0"}.Execute(out, Context{Environment: config.Environment{Name: "local"}})
+	go Deploy{product: "Foo", version: "1.0.0"}.Execute(out, Context{Environment: config.Environment{Name: "local"}, User: "foo_bar"})
 
 	assert.Equal(t, "Deploying *Foo-1.0.0* to *local* environment...", <-out)
 	assert.Equal(t, "*Foo-1.0.0* was successfully deployed.", <-out)
@@ -46,5 +46,5 @@ func TestDeploy_Execute(t *testing.T) {
 	e := h.Entries[0]
 	assert.Equal(t, e.Message, "deployed successfully")
 	assert.Equal(t, e.Level, log.InfoLevel)
-	assert.Equal(t, log.Fields{"product": "Foo", "version": "1.0.0", "environment": "local"}, e.Fields)
+	assert.Equal(t, log.Fields{"product": "Foo", "version": "1.0.0", "environment": "local", "username": "foo_bar"}, e.Fields)
 }

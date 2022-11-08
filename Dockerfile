@@ -6,6 +6,9 @@ ARG ORAS_VERSION=0.13.0
 WORKDIR /build
 COPY . /build
 
+RUN apt-get update \
+    && apt-get install -y unzip
+
 RUN make
 
 RUN curl https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz --output /tmp/helm.tar.gz \
@@ -73,5 +76,6 @@ COPY --from=build /build/kubot /opt/kubot/
 COPY --from=build /usr/local/bin/helm /usr/local/bin
 COPY --from=build /usr/local/bin/kubectl /usr/local/bin
 COPY --from=build /usr/local/bin/oras /usr/local/bin
+COPY --from=build /usr/local/bin/kubelogin /usr/local/bin
 
 ENTRYPOINT [ "/opt/kubot/kubot" ]

@@ -24,6 +24,12 @@ RUN mkdir /tmp/oras \
     && mv /tmp/oras/oras /usr/local/bin/oras \
     && rm -rf /tmp/oras
 
+RUN mkdir /tmp/kubelogin \
+    && curl -L https://github.com/Azure/kubelogin/releases/download/v0.0.20/kubelogin-linux-amd64.zip -o /tmp/kubelogin/kubelogin.zip \
+    && unzip /tmp/kubelogin/kubelogin.zip -d /tmp/kubelogin \
+    && mv /tmp/kubelogin/bin/linux_amd64/kubelogin /usr/local/bin/kubelogin \
+    && rm -rf /tmp/kubelogin
+
 # CA Certificates
 FROM alpine:latest AS alpine-base
 RUN apk --update --no-cache add ca-certificates

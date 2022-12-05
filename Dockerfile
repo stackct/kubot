@@ -52,7 +52,7 @@ RUN apk add --virtual=build make gcc gnupg libffi-dev musl-dev python3-dev \
  && python3 get-pip.py \
  && pip3 install azure-cli
 
-RUN apk add --no-cache gnupg openssl1.1-compat --virtual .build-dependencies -- && \
+RUN apk add --no-cache gnupg --virtual .build-dependencies -- && \
     # Download mssql-tools and msodbcsql
     curl -O https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/msodbcsql17_${MSSQL_VERSION}_amd64.apk && \
     curl -O https://download.microsoft.com/download/e/4/e/e4e67866-dffd-428c-aac7-8d28ddafb39b/mssql-tools_${MSSQL_VERSION}_amd64.apk && \
@@ -69,7 +69,9 @@ RUN apk add --no-cache gnupg openssl1.1-compat --virtual .build-dependencies -- 
     apk del .build-dependencies && rm -f ms*.sig ms*.apk && \
 	# Create symbolic links
 	ln -s /opt/mssql-tools/bin/bcp /usr/local/bin/bcp && \
-	ln -s /opt/mssql-tools/bin/sqlcmd /usr/local/bin/sqlcmd
+	ln -s /opt/mssql-tools/bin/sqlcmd /usr/local/bin/sqlcmd && \
+    # Downgrade to openssl1 for sqlcmd
+    apk add --no-cache openssl1.1-compat
 
 COPY --from=alpine-base /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /build/kubot /opt/kubot/

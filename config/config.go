@@ -9,7 +9,7 @@ import (
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/json"
 	"github.com/apex/log/handlers/text"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 var Conf Configurator

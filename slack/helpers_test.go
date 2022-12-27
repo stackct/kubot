@@ -2,7 +2,7 @@ package slack
 
 import (
 	"encoding/json"
-	"github.com/nlopes/slack"
+	"github.com/slack-go/slack"
 	"kubot/command"
 	"kubot/config"
 )

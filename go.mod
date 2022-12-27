@@ -1,19 +1,23 @@
 module kubot
 
-// Temporarily override until PR is applied (https://github.com/nlopes/slack/pull/636)
-replace github.com/nlopes/slack v0.6.0 => github.com/acaloiaro/slack v0.6.3-0.20191210002151-2cc5dc1c8f87
-
-go 1.15
+go 1.19
 
 require (
 	github.com/apex/log v1.9.0
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
-	github.com/nlopes/slack v0.6.0
+	github.com/slack-go/slack v0.12.1
+	github.com/spf13/cobra v1.6.1
+	github.com/stretchr/testify v1.8.1
+	gopkg.in/yaml.v3 v3.0.1
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/inconshreveable/mousetrap v1.0.1 // indirect
+	github.com/kr/pretty v0.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
-	github.com/spf13/cobra v1.4.0
-	github.com/spf13/viper v1.8.1 // indirect
-	github.com/stretchr/testify v1.7.0
-	gopkg.in/yaml.v2 v2.4.0
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 )

@@ -9,7 +9,7 @@ import (
 	"kubot/command"
 	"kubot/config"
 
-	"github.com/nlopes/slack"
+	"github.com/slack-go/slack"
 )
 
 var (

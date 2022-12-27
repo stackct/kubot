@@ -1,6 +1,5 @@
 # Build image container
 FROM golang:1.13.4 AS build
-ARG K8S_VERSION=v1.20.9
 ARG HELM_VERSION=3.9.1
 ARG ORAS_VERSION=0.13.0
 WORKDIR /build
@@ -17,7 +16,7 @@ RUN curl https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz --output /
 	&& rm -rf /tmp/linux-amd64 \
 	&& rm /tmp/helm.tar.gz
 
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl \
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
 	&& chmod +x ./kubectl \
 	&& mv ./kubectl /usr/local/bin/kubectl
 

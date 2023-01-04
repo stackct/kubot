@@ -38,13 +38,13 @@ func (d Deploy) Execute(out chan string, context Context) {
 		productLabel = fmt.Sprintf("*%s* with %s", d.release, productLabel)
 	}
 
-	out <- fmt.Sprintf("Deploying %s to *%s* environment...", productLabel, context.Environment.Name)
+	out <- fmt.Sprintf("Deploying %s to *%s*...", productLabel, context.Environment.Name)
 
 	if err := Execute("deploy", d.product, map[string]string{"product": d.product, "version": d.version, "release": d.release, "environment": context.Environment.Name}, context.Environment.Variables, out); err != nil {
 		log.Error(err.Error())
-		out <- fmt.Sprintf("%s deployment failed", productLabel)
+		out <- fmt.Sprintf("%s deployment *FAILED* on *%s*", productLabel, context.Environment.Name)
 		return
 	}
 	log.WithField("product", d.product).WithField("version", d.version).WithField("environment", context.Environment.Name).WithField("username", context.User).Info("deployed successfully")
-	out <- fmt.Sprintf("%s was successfully deployed.", productLabel)
+	out <- fmt.Sprintf("%s was successfully deployed to *%s*", productLabel, context.Environment.Name)
 }

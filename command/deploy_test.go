@@ -44,8 +44,8 @@ func TestDeploy_Execute(t *testing.T) {
 
 	assert.Equal(t, 1, len(h.Entries))
 	e := h.Entries[0]
-	assert.Equal(t, e.Message, "deployed successfully")
-	assert.Equal(t, e.Level, log.InfoLevel)
+	assert.Equal(t, "deployed successfully", e.Message)
+	assert.Equal(t, log.InfoLevel, e.Level)
 	assert.Equal(t, log.Fields{"product": "Foo", "version": "1.0.0", "environment": "local", "username": "foo_bar"}, e.Fields)
 }
 
@@ -63,7 +63,39 @@ func TestDeployWithRelease_Execute(t *testing.T) {
 
 	assert.Equal(t, 1, len(h.Entries))
 	e := h.Entries[0]
-	assert.Equal(t, e.Message, "deployed successfully")
-	assert.Equal(t, e.Level, log.InfoLevel)
+	assert.Equal(t, "deployed successfully", e.Message)
+	assert.Equal(t, log.InfoLevel, e.Level)
 	assert.Equal(t, log.Fields{"product": "Foo", "version": "1.0.0", "environment": "local", "username": "foo_bar"}, e.Fields)
+}
+
+func TestDeployWithProhibitedCommand_Execute(t *testing.T) {
+	h := memory.New()
+	log.SetHandler(h)
+
+	out := make(chan string)
+	config.Conf = config.NewMockConfig()
+
+	Deploy{product: "prohibited", version: "1.0.0", release: "prohibited"}.Execute(out, Context{Environment: config.Environment{Name: "local"}, User: "foo_bar"})
+
+	assert.Equal(t, 1, len(h.Entries))
+	e := h.Entries[0]
+	assert.Equal(t, "Skipped deploy command for product prohibited because it was found on the prohibited command list", e.Message)
+	assert.Equal(t, log.InfoLevel, e.Level)
+}
+
+func TestDeployWithCommandNotFound_Execute(t *testing.T) {
+	h := memory.New()
+	log.SetHandler(h)
+
+	out := make(chan string)
+	config.Conf = config.NewMockConfig()
+
+	go Deploy{product: "nil", version: "1.0.0", release: "nil"}.Execute(out, Context{Environment: config.Environment{Name: "local"}, User: "foo_bar"})
+
+	assert.Equal(t, "deploy command for product nil was not found", <-out)
+
+	assert.Equal(t, 1, len(h.Entries))
+	e := h.Entries[0]
+	assert.Equal(t, "command not found", e.Message)
+	assert.Equal(t, log.ErrorLevel, e.Level)
 }

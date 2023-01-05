@@ -31,13 +31,14 @@ func InitLogging(logFilename string, logLevel string) (*os.File, error) {
 }
 
 type Config struct {
-	Environments  []Environment     `yaml:"environments"`
-	SlackToken    string            `yaml:"slackToken"`
-	Logging       Logging           `yaml:"logging"`
-	Commands      []Command         `yaml:"commands"`
-	CommandConfig map[string]string `yaml:"commandConfig"`
-	CommandPrefix string            `yaml:"commandPrefix"`
-	Init          []Command         `yaml:"init"`
+	Environments       []Environment     `yaml:"environments"`
+	SlackToken         string            `yaml:"slackToken"`
+	Logging            Logging           `yaml:"logging"`
+	Commands           []Command         `yaml:"commands"`
+	ProhibitedCommands []Command         `yaml:"prohibitedCommands"`
+	CommandConfig      map[string]string `yaml:"commandConfig"`
+	CommandPrefix      string            `yaml:"commandPrefix"`
+	Init               []Command         `yaml:"init"`
 }
 
 type Configurator interface {
@@ -163,13 +164,33 @@ func (c Config) GetCommandConfig() map[string]string {
 	return config
 }
 
+type ProhibitedCmdError struct{}
+
+func (e *ProhibitedCmdError) Error() string {
+	return "Detected Prohibited Command"
+}
+
 func (c Config) GetCommand(name string, product string) (*Command, error) {
-	for _, cmd := range c.Commands {
+	cmd, err := GetCommand(c.Commands, name, product)
+	if nil != err {
+		return nil, err
+	}
+	prohibitedCmd, err := GetCommand(c.ProhibitedCommands, name, product)
+	if nil != prohibitedCmd {
+		return nil, &ProhibitedCmdError{}
+	}
+	return cmd, nil
+}
+
+func GetCommand(commands []Command, name string, product string) (*Command, error) {
+	// Check for exact match first
+	for _, cmd := range commands {
 		if cmd.Name == name && cmd.Product == product {
 			return &cmd, nil
 		}
 	}
-	for _, cmd := range c.Commands {
+	// If no exact matches were found, return the first command that doesn't have a product
+	for _, cmd := range commands {
 		if cmd.Name == name && cmd.Product == "" {
 			return &cmd, nil
 		}

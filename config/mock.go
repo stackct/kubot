@@ -70,6 +70,12 @@ func (c *MockConfig) GetCommand(name string, product string) (*Command, error) {
 			Config:   map[string]string{"foo2": "bar2"},
 		}, nil
 	}
+	if "deploy" == name && "prohibited" == product {
+		return nil, &ProhibitedCmdError{}
+	}
+	if "deploy" == name && "nil" == product {
+		return nil, errors.New("command not found")
+	}
 	return &Command{}, nil
 }
 

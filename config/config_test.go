@@ -216,6 +216,23 @@ func TestConfig_GetCommand_NotFound(t *testing.T) {
 	assert.Equal(t, err, errors.New("command not found: cmd3"))
 }
 
+func TestConfig_GetCommand_Prohibited(t *testing.T) {
+	config := Config{
+		ProhibitedCommands: []Command{
+			{Name: "cmd2"},
+		},
+		Commands: []Command{
+			{Name: "cmd"},
+			{Name: "cmd2"},
+		},
+	}
+	_, err := config.GetCommand("cmd2", "")
+	assert.Equal(t, &ProhibitedCmdError{}, err)
+
+	_, err = config.GetCommand("cmd", "")
+	assert.Nil(t, err)
+}
+
 func TestConfig_GetCommandPrefix(t *testing.T) {
 	assert.Equal(t, "!", Config{CommandPrefix: "!"}.GetCommandPrefix())
 }

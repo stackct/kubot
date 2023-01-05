@@ -2,8 +2,8 @@ package command
 
 import (
 	"fmt"
-
 	"github.com/apex/log"
+	"kubot/config"
 )
 
 type Deploy struct {
@@ -33,6 +33,19 @@ func NewDeploy(args []string) (*Deploy, error) {
 func (d Deploy) Execute(out chan string, context Context) {
 	defer close(out)
 
+	commandName := "deploy"
+	_, err := config.Conf.GetCommand(commandName, d.product)
+	if err != nil {
+		switch err.(type) {
+		case *config.ProhibitedCmdError:
+			log.Info(fmt.Sprintf("Skipped %s command for product %s because it was found on the prohibited command list", commandName, d.product))
+		default:
+			log.Error(err.Error())
+			out <- fmt.Sprintf("%s command for product %s was not found", commandName, d.product)
+		}
+		return
+	}
+
 	productLabel := fmt.Sprintf("*%s-%s*", d.product, d.version)
 	if d.release != d.product {
 		productLabel = fmt.Sprintf("*%s* with %s", d.release, productLabel)
@@ -40,7 +53,7 @@ func (d Deploy) Execute(out chan string, context Context) {
 
 	out <- fmt.Sprintf("Deploying %s to *%s*...", productLabel, context.Environment.Name)
 
-	if err := Execute("deploy", d.product, map[string]string{"product": d.product, "version": d.version, "release": d.release, "environment": context.Environment.Name}, context.Environment.Variables, out); err != nil {
+	if err := Execute(commandName, d.product, map[string]string{"product": d.product, "version": d.version, "release": d.release, "environment": context.Environment.Name}, context.Environment.Variables, out); err != nil {
 		log.Error(err.Error())
 		out <- fmt.Sprintf("%s deployment *FAILED* on *%s*", productLabel, context.Environment.Name)
 		return

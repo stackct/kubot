@@ -34,7 +34,7 @@ func (c *MockConfig) GetSlackToken() string {
 
 func (c *MockConfig) GetEnvironmentByChannel(ch string) (*Environment, error) {
 	if c.MockHasEnvironment {
-		return &Environment{Name: ch, Channel: ch}, nil
+		return &Environment{Name: ch, Channel: ch, Variables: map[string]string{"CLUSTER": "mock-cluster"}}, nil
 	}
 
 	return nil, errors.New("Environment not found")

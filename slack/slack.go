@@ -35,7 +35,13 @@ func Start() {
 	channels, _, _ = rtm.GetConversations(&slack.GetConversationsParameters{Limit: 1000, Types: []string{"private_channel"}})
 
 	for _, channel := range channels {
-		rtm.SendMessage(rtm.NewOutgoingMessage("Ready", channel.ID))
+		env, err := config.Conf.GetEnvironmentByChannel(channel.Name)
+		if err != nil {
+			handleError(err, channel.Name, command.Context{})
+			return
+		}
+		clusterName := env.Variables["CLUSTER"]
+		rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("Ready on *%s*", clusterName), channel.ID))
 	}
 
 	for e := range rtm.IncomingEvents {

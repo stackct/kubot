@@ -103,7 +103,7 @@ func TestStart_Loads_Channels(t *testing.T) {
 		w.Write([]byte(`{ "ok": true, "channels": [ { "id": "123FOO", "name": "foo" } ] }`))
 	})
 
-	runTest(t, "!any", "Ready")
+	runTest(t, "!any", "Ready on *mock-cluster*")
 
 	rsp, err := server.waitForRequest()
 	if err != nil {

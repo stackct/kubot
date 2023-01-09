@@ -72,6 +72,9 @@ RUN apk add --no-cache gnupg --virtual .build-dependencies -- && \
     # Downgrade to openssl1 for sqlcmd
     apk add --no-cache openssl1.1-compat
 
+# Required for db-migration script
+RUN apk add uuidgen
+
 COPY --from=alpine-base /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /build/kubot /opt/kubot/
 COPY --from=build /usr/local/bin/helm /usr/local/bin

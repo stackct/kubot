@@ -57,6 +57,23 @@ func handleEvent(e slack.RTMEvent) {
 	case *slack.MessageEvent:
 		context.User = GetUser(ev.User).Name
 
+		// WARNING: Command parsing must happen first since kubot receives every message in the channel and will drop most messages
+		cmdString := command.RemoveFormatting(ev.Text)
+		cmdString, err := command.RemoveDirectMessages(cmdString, context.Environment.Name)
+		if err != nil {
+			return
+		}
+		cmd, err := parser.Parse(cmdString)
+		if err != nil {
+			if _, ok := err.(*command.UnknownCommandError); ok {
+				return
+			}
+			if err, ok := err.(*command.CommandArgumentError); ok {
+				handleError(err, ev.Channel, context)
+				return
+			}
+		}
+
 		log.WithField("channel", ev.Channel).Info("Looking up channel")
 
 		env, err := config.Conf.GetEnvironmentByChannel(GetChannel((ev.Channel)).Name)
@@ -72,29 +89,6 @@ func handleEvent(e slack.RTMEvent) {
 		}
 
 		log.Info(context.User)
-
-		cmdString := command.RemoveFormatting(ev.Text)
-		cmdString, err = command.RemoveDirectMessages(cmdString, context.Environment.Name)
-		if err != nil {
-			log.
-				WithField("channel", ev.Channel).
-				WithField("environment", context.Environment.Name).
-				WithField("user", context.User).
-				WithError(err).
-				Error(err.Error())
-			return
-		}
-
-		cmd, err := parser.Parse(cmdString)
-		if err != nil {
-			if _, ok := err.(*command.UnknownCommandError); ok {
-				return
-			}
-			if err, ok := err.(*command.CommandArgumentError); ok {
-				handleError(err, ev.Channel, context)
-				return
-			}
-		}
 
 		out := make(chan string)
 		go cmd.Execute(out, context)

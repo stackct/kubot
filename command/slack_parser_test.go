@@ -11,6 +11,34 @@ func init() {
 	SlackCommandPrefix = "!"
 }
 
+func TestRemoveFormatting(t *testing.T) {
+	testCases := []struct {
+		message  string
+		expected string
+	}{
+		{
+			message:  ".deploy foo 1.0.0",
+			expected: ".deploy foo 1.0.0",
+		},
+		{
+			message:  "`.deploy foo 1.0.0`",
+			expected: ".deploy foo 1.0.0",
+		},
+		{
+			message:  ".deploy foo 1.0.0 @foo-bar-12345",
+			expected: ".deploy foo 1.0.0 @foo-bar-12345",
+		},
+		{
+			message:  "!deploy *foo x.y.z*",
+			expected: "!deploy foo x.y.z",
+		},
+	}
+
+	for _, tt := range testCases {
+		assert.Equal(t, tt.expected, RemoveFormatting(tt.message))
+	}
+}
+
 func TestRemoveDirectMessages(t *testing.T) {
 	testCases := []struct {
 		message     string

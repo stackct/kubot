@@ -73,7 +73,8 @@ func handleEvent(e slack.RTMEvent) {
 
 		log.Info(context.User)
 
-		cmdString, err := command.RemoveDirectMessages(ev.Text, context.Environment.Name)
+		cmdString := command.RemoveFormatting(ev.Text)
+		cmdString, err = command.RemoveDirectMessages(cmdString, context.Environment.Name)
 		if err != nil {
 			log.
 				WithField("channel", ev.Channel).

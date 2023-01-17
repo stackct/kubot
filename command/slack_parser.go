@@ -19,6 +19,10 @@ func NewSlackCommandParser() SlackCommandParser {
 	return SlackCommandParser{}
 }
 
+func RemoveFormatting(c string) string {
+	return regexp.MustCompile(`[^a-zA-Z0-9!.@\- ]+`).ReplaceAllString(c, "")
+}
+
 func RemoveDirectMessages(c string, contextName string) (string, error) {
 	var directMessageMentions []string
 	var commandParts []string

@@ -57,13 +57,8 @@ func handleEvent(e slack.RTMEvent) {
 	case *slack.MessageEvent:
 		context.User = GetUser(ev.User).Name
 
-		// WARNING: Command parsing must happen first since kubot receives every message in the channel and will drop most messages
-		cmdString := command.RemoveFormatting(ev.Text)
-		cmdString, err := command.RemoveDirectMessages(cmdString, context.Environment.Name)
-		if err != nil {
-			return
-		}
-		cmd, err := parser.Parse(cmdString)
+		// Early exit since many messages in this channel are not actual commands
+		cmd, err := parser.Parse(ev.Text)
 		if err != nil {
 			if _, ok := err.(*command.UnknownCommandError); ok {
 				return
@@ -86,6 +81,29 @@ func handleEvent(e slack.RTMEvent) {
 		if !config.Conf.HasAccess(GetUser(ev.User).Profile.Email, env.Name) {
 			handleError(errors.New("Access denied"), ev.Channel, context)
 			return
+		}
+
+		cmdString := command.RemoveFormatting(ev.Text)
+		cmdString, err = command.RemoveDirectMessages(cmdString, context.Environment.Name)
+		if err != nil {
+			log.
+				WithField("channel", ev.Channel).
+				WithField("environment", context.Environment.Name).
+				WithField("user", context.User).
+				WithError(err).
+				Error(err.Error())
+			return
+		}
+
+		cmd, err = parser.Parse(cmdString)
+		if err != nil {
+			if _, ok := err.(*command.UnknownCommandError); ok {
+				return
+			}
+			if err, ok := err.(*command.CommandArgumentError); ok {
+				handleError(err, ev.Channel, context)
+				return
+			}
 		}
 
 		log.Info(context.User)

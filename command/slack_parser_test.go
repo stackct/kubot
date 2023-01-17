@@ -1,6 +1,7 @@
 package command
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,6 +9,64 @@ import (
 
 func init() {
 	SlackCommandPrefix = "!"
+}
+
+func TestRemoveDirectMessages(t *testing.T) {
+	testCases := []struct {
+		message     string
+		contextName string
+		expected    string
+		err         error
+	}{
+		{
+			message:     "!deploy foo x.y.z",
+			contextName: "bar",
+			expected:    "!deploy foo x.y.z",
+			err:         nil,
+		},
+		{
+			message:     "!deploy foo x.y.z @baz",
+			contextName: "bar",
+			expected:    "",
+			err:         errors.New("command is not intended for this instance"),
+		},
+		{
+			message:     "@baz !deploy foo x.y.z",
+			contextName: "bar",
+			expected:    "",
+			err:         errors.New("command is not intended for this instance"),
+		},
+		{
+			message:     "@bar !deploy foo x.y.z",
+			contextName: "bar",
+			expected:    "!deploy foo x.y.z",
+			err:         nil,
+		},
+		{
+			message:     "!deploy foo x.y.z @bar",
+			contextName: "bar",
+			expected:    "!deploy foo x.y.z",
+			err:         nil,
+		},
+		{
+			message:     "!deploy foo x.y.z @baz @bar",
+			contextName: "bar",
+			expected:    "!deploy foo x.y.z",
+			err:         nil,
+		},
+		{
+			message:     "!deploy foo x.y.z @baz @foobar",
+			contextName: "bar",
+			expected:    "",
+			err:         errors.New("command is not intended for this instance"),
+		},
+	}
+
+	for _, tt := range testCases {
+		command, err := RemoveDirectMessages(tt.message, tt.contextName)
+		assert.Equal(t, tt.expected, command)
+		assert.Equal(t, tt.err, err)
+	}
 }
 
 func TestParseCommand(t *testing.T) {

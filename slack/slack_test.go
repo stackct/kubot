@@ -46,6 +46,7 @@ func TestStart_Parse_Command_Error(t *testing.T) {
 		{ParseUnknownCommandError, "any", ""},
 		{ParseCommandArgumentError, "any", "command argument error"},
 		{ParseSuccess, "any", "fin"},
+		{ParseSuccess, "any", "fin"},
 	}
 
 	for _, tc := range testCases {
